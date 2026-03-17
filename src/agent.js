@@ -42,7 +42,7 @@ async function runAgentLoop({ model, url, systemPrompt, prompt, yolo, plan }) {
     }
 
     if (!message.tool_calls || message.tool_calls.length === 0) {
-      console.log(
+      console.error(
         `[Token Usage] Final Context: ${response.usage ? response.usage.total_tokens : 0} tokens | Session Cumulative: ${totalTokens} tokens`,
       );
       break;
@@ -58,7 +58,7 @@ async function runAgentLoop({ model, url, systemPrompt, prompt, yolo, plan }) {
         Object.keys(displayArgs).length > 0
           ? ` with args: ${JSON.stringify(displayArgs)}`
           : "";
-      console.log(
+      console.error(
         `> Executing tool: ${functionName}${argsStr} Context: ${response.usage ? response.usage.total_tokens : 0} tokens`,
       );
 
