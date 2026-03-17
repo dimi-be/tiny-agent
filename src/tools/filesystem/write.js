@@ -3,6 +3,7 @@ const path = require('path');
 const { securePath, hasBeenRead } = require('../../utils/security');
 const { confirmAction } = require('../../utils/ui');
 const { getIsYolo } = require('./state');
+const { checkSyntax } = require('../../utils/syntax');
 
 async function writeTool(filePath, content) {
   const resolved = securePath(filePath);
@@ -22,7 +23,9 @@ async function writeTool(filePath, content) {
 
   await fs.mkdir(path.dirname(resolved), { recursive: true });
   await fs.writeFile(resolved, content, 'utf-8');
-  return `Successfully wrote to ${filePath}`;
+  
+  const syntaxResult = await checkSyntax(resolved);
+  return `Successfully wrote to ${filePath}\n${syntaxResult}`;
 }
 
 module.exports = writeTool;
