@@ -2,6 +2,7 @@ const fs = require('fs/promises');
 const path = require('path');
 const ignore = require('ignore');
 const { securePath } = require('../../utils/security');
+const { directoryHasAgentsMd } = require('../../utils/agentsMd');
 
 async function treeTool(dirPath = '.') {
   const resolved = securePath(dirPath);
@@ -41,11 +42,18 @@ async function treeTool(dirPath = '.') {
       const marker = isLast ? '└── ' : '├── ';
       const newPrefix = prefix + (isLast ? '    ' : '│   ');
       
-      result += `${prefix}${marker}${entry.name}\n`;
+      let line = `${prefix}${marker}${entry.name}`;
       
       if (entry.isDirectory()) {
         const fullPath = path.join(currentPath, entry.name);
+        const hasAgents = await directoryHasAgentsMd(fullPath);
+        if (hasAgents) {
+          line += ' (Contains AGENTS.md)';
+        }
+        result += line + '\n';
         result += await buildTree(fullPath, newPrefix);
+      } else {
+        result += line + '\n';
       }
     }
     return result;

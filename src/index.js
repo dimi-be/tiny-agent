@@ -73,6 +73,14 @@ async function main() {
   }
 
   try {
+    const rootAgentsFile = require('path').join(process.cwd(), 'AGENTS.md');
+    const rootAgentsMdContent = await fs.readFile(rootAgentsFile, 'utf-8');
+    systemPrompt += `\n\n# PROJECT INSTRUCTIONS (FROM ROOT AGENTS.md):\n${rootAgentsMdContent}\n\n[SYSTEM NOTE: The content of the root 'AGENTS.md' has already been included in your system prompt above. You do not need to read it using a tool.]`;
+  } catch (err) {
+    // Silently ignore if AGENTS.md does not exist
+  }
+
+  try {
     await runAgentLoop({
       model: argv.model,
       url: argv.url,

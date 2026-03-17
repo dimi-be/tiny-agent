@@ -1,5 +1,6 @@
 const fs = require('fs/promises');
 const { securePath, markAsRead } = require('../../utils/security');
+const { getAgentsWarning } = require('../../utils/agentsMd');
 
 async function readLinesTool(filePath, startLine, endLine) {
   const resolved = securePath(filePath);
@@ -8,7 +9,11 @@ async function readLinesTool(filePath, startLine, endLine) {
   const lines = content.split('\n');
   const start = Math.max(0, startLine - 1);
   const end = Math.min(lines.length, endLine);
-  return lines.slice(start, end).join('\n');
+  
+  const selectedLines = lines.slice(start, end).join('\n');
+  const warning = await getAgentsWarning(resolved);
+  
+  return warning + selectedLines;
 }
 
 module.exports = readLinesTool;
