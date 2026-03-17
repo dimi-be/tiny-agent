@@ -1,0 +1,170 @@
+const filesystem = require('./filesystem');
+const system = require('./system');
+
+function setYolo(yolo) {
+  filesystem.setYolo(yolo);
+  system.setYolo(yolo);
+}
+
+const schemas = [
+  {
+    type: "function",
+    function: {
+      name: "read",
+      description: "Returns the full text content of a file.",
+      parameters: {
+        type: "object",
+        properties: {
+          filePath: { type: "string" }
+        },
+        required: ["filePath"]
+      }
+    }
+  },
+  {
+    type: "function",
+    function: {
+      name: "readLines",
+      description: "Returns a specific range of lines from a file. Critical for large files.",
+      parameters: {
+        type: "object",
+        properties: {
+          filePath: { type: "string" },
+          startLine: { type: "number" },
+          endLine: { type: "number" }
+        },
+        required: ["filePath", "startLine", "endLine"]
+      }
+    }
+  },
+  {
+    type: "function",
+    function: {
+      name: "grep",
+      description: "Searches for a string and returns matches with line numbers.",
+      parameters: {
+        type: "object",
+        properties: {
+          pattern: { type: "string" },
+          filePath: { type: "string" }
+        },
+        required: ["pattern", "filePath"]
+      }
+    }
+  },
+  {
+    type: "function",
+    function: {
+      name: "ls",
+      description: "Lists files and directories in a specific directory (one at a time).",
+      parameters: {
+        type: "object",
+        properties: {
+          dirPath: { type: "string", description: "The directory to list. Defaults to '.' (current directory)." }
+        },
+        required: []
+      }
+    }
+  },
+  {
+    type: "function",
+    function: {
+      name: "tree",
+      description: "Lists directory structure recursively, respecting .gitignore and hiding hidden files/node_modules.",
+      parameters: {
+        type: "object",
+        properties: {
+          dirPath: { type: "string", description: "The directory to list. Defaults to '.' (current directory)." }
+        },
+        required: []
+      }
+    }
+  },
+  {
+    type: "function",
+    function: {
+      name: "write",
+      description: "Writes or overwrites a file. Automatically creates directories. File MUST be read first if it exists.",
+      parameters: {
+        type: "object",
+        properties: {
+          filePath: { type: "string" },
+          content: { type: "string" }
+        },
+        required: ["filePath", "content"]
+      }
+    }
+  },
+  {
+    type: "function",
+    function: {
+      name: "mkdir",
+      description: "Creates a new directory.",
+      parameters: {
+        type: "object",
+        properties: {
+          dirPath: { type: "string" }
+        },
+        required: ["dirPath"]
+      }
+    }
+  },
+  {
+    type: "function",
+    function: {
+      name: "touch",
+      description: "Creates an empty file or updates the timestamp.",
+      parameters: {
+        type: "object",
+        properties: {
+          filePath: { type: "string" }
+        },
+        required: ["filePath"]
+      }
+    }
+  },
+  {
+    type: "function",
+    function: {
+      name: "rm",
+      description: "Deletes a file or directory.",
+      parameters: {
+        type: "object",
+        properties: {
+          filePath: { type: "string" },
+          recursive: { type: "boolean" }
+        },
+        required: ["filePath"]
+      }
+    }
+  },
+  {
+    type: "function",
+    function: {
+      name: "npm",
+      description: "Runs an npm command.",
+      parameters: {
+        type: "object",
+        properties: {
+          command: { type: "string" }
+        },
+        required: ["command"]
+      }
+    }
+  }
+];
+
+const handlers = {
+  read: async (args) => await filesystem.readFileTool(args.filePath),
+  readLines: async (args) => await filesystem.readLinesTool(args.filePath, args.startLine, args.endLine),
+  grep: async (args) => await filesystem.grepTool(args.pattern, args.filePath),
+  ls: async (args) => await filesystem.lsTool(args.dirPath),
+  tree: async (args) => await filesystem.treeTool(args.dirPath),
+  write: async (args) => await filesystem.writeTool(args.filePath, args.content),
+  mkdir: async (args) => await filesystem.mkdirTool(args.dirPath),
+  touch: async (args) => await filesystem.touchTool(args.filePath),
+  rm: async (args) => await filesystem.rmTool(args.filePath, args.recursive),
+  npm: async (args) => await system.npmTool(args.command)
+};
+
+module.exports = { schemas, handlers, setYolo };

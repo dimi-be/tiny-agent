@@ -1,0 +1,90 @@
+#!/usr/bin/env node
+
+const yargs = require('yargs/yargs');
+const { hideBin } = require('yargs/helpers');
+const fs = require('fs/promises');
+const { runAgentLoop } = require('./agent');
+
+async function main() {
+  const argv = yargs(hideBin(process.argv))
+    .option('model', {
+      alias: 'm',
+      type: 'string',
+      description: 'The name of the model loaded in LM Studio',
+      demandOption: true
+    })
+    .option('url', {
+      alias: 'u',
+      type: 'string',
+      description: 'The local API endpoint',
+      default: 'http://localhost:1234/v1'
+    })
+    .option('system', {
+      alias: 's',
+      type: 'string',
+      description: 'Path to a text file containing a custom system prompt'
+    })
+    .option('yolo', {
+      alias: 'y',
+      type: 'boolean',
+      description: 'Enable automatic edits (bypasses manual confirmations)',
+      default: false
+    })
+    .option('plan', {
+      alias: 'p',
+      type: 'boolean',
+      description: 'Plan mode: restricts the agent to read-only tools',
+      default: false
+    })
+    .demandCommand(1, 'You must provide a PROMPT as the last argument')
+    .parse();
+
+  const promptArg = argv._[0];
+  let promptText = '';
+
+  if (promptArg === '-') {
+    const { stdin } = process;
+    let data = '';
+    stdin.setEncoding('utf8');
+    for await (const chunk of stdin) {
+      data += chunk;
+    }
+    promptText = data.trim();
+  } else {
+    promptText = String(promptArg);
+  }
+
+  if (!promptText) {
+    console.error('Error: PROMPT cannot be empty.');
+    process.exit(1);
+  }
+
+  let systemPrompt = argv.plan 
+    ? "You are a planner. Your goal is to research the codebase and design a solution. Analyze the current implementation and describe the steps needed for the requested changes. Use readLines for large files. Work only within the current directory."
+    : "You are a code implementer. You must read existing files before writing to them. Use readLines for large files. Work only within the current directory.";
+  
+  if (argv.system) {
+    try {
+      systemPrompt = await fs.readFile(argv.system, 'utf-8');
+    } catch (err) {
+      console.error(`Error reading system prompt file at ${argv.system}: ${err.message}`);
+      process.exit(1);
+    }
+  }
+
+  try {
+    await runAgentLoop({
+      model: argv.model,
+      url: argv.url,
+      systemPrompt,
+      prompt: promptText,
+      yolo: argv.yolo,
+      plan: argv.plan
+    });
+  } catch (error) {
+    console.error(`\nAgent Error: ${error.message}`);
+    process.exit(1);
+  }
+}
+
+main();
