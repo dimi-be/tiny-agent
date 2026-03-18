@@ -11,7 +11,7 @@ async function runAgentLoop({ model, url, systemPrompt, prompt, yolo, plan }) {
 
   const activeTools = plan
     ? tools.schemas.filter((schema) =>
-        ["read", "readLines", "grep", "ls", "tree"].includes(
+        ["read", "grep", "ls", "tree"].includes(
           schema.function.name,
         ),
       )

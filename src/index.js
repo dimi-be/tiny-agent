@@ -34,7 +34,7 @@ async function main() {
       alias: "p",
       type: "boolean",
       description: "Plan mode: restricts the agent to read-only tools",
-      default: false,
+      default: false
     })
     .demandCommand(1, "You must provide a PROMPT as the last argument")
     .parse();
@@ -60,8 +60,8 @@ async function main() {
   }
 
   let systemPrompt = argv.plan
-    ? "You are a reader. You can only read files and output text to help the user with his request. Use readLines for large files. Work only within the current directory."
-    : "You are a code implementer. You must read existing files before writing to them. Use readLines for large files. Work only within the current directory.";
+    ? "You are a reader. You can only read files and output text to help the user with his request. Work only within the current directory."
+    : "You are a code implementer. You must read existing files before writing to them. Work only within the current directory.";
 
   if (argv.system) {
     try {
@@ -89,7 +89,7 @@ async function main() {
       systemPrompt,
       prompt: promptText,
       yolo: argv.yolo,
-      plan: argv.plan,
+      plan: argv.plan
     });
   } catch (error) {
     console.error(`\nAgent Error: ${error.message}`);

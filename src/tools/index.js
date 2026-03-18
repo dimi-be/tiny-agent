@@ -24,22 +24,6 @@ const schemas = [
   {
     type: "function",
     function: {
-      name: "readLines",
-      description: "Returns a specific range of lines from a file. Critical for large files.",
-      parameters: {
-        type: "object",
-        properties: {
-          filePath: { type: "string" },
-          startLine: { type: "number" },
-          endLine: { type: "number" }
-        },
-        required: ["filePath", "startLine", "endLine"]
-      }
-    }
-  },
-  {
-    type: "function",
-    function: {
       name: "grep",
       description: "Searches for a string and returns matches with line numbers.",
       parameters: {
@@ -156,7 +140,6 @@ const schemas = [
 
 const handlers = {
   read: async (args) => await filesystem.readFileTool(args.filePath),
-  readLines: async (args) => await filesystem.readLinesTool(args.filePath, args.startLine, args.endLine),
   grep: async (args) => await filesystem.grepTool(args.pattern, args.filePath),
   ls: async (args) => await filesystem.lsTool(args.dirPath),
   tree: async (args) => await filesystem.treeTool(args.dirPath),
