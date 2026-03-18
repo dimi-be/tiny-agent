@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import { securePath, hasBeenRead } from "../../utils/security.js";
 import { confirmAction } from "../../utils/ui.js";
-import { getIsYolo, getIsPlainText } from "./state.js";
+import { getIsYolo, getIsPlainText } from "../../utils/state.js";
 import { checkSyntax } from "../../utils/syntax/index.js";
 
 export default async function writeTool(filePath, content) {

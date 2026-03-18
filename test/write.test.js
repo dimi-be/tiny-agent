@@ -4,7 +4,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import writeTool from '../src/tools/filesystem/write.js';
 import readFileTool from '../src/tools/filesystem/read.js';
-import { setYolo, setPlainText } from '../src/tools/filesystem/state.js';
+import { setYolo, setPlainText } from '../src/utils/state.js';
 
 test('Write Tool (Read-Before-Write Policy)', async (t) => {
   const tmpFile = path.join(process.cwd(), 'test-write-policy.txt');

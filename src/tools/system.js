@@ -1,14 +1,12 @@
 import { checkNpmCommand } from '../utils/security.js';
 import { confirmAction } from '../utils/ui.js';
 import { execFileAsync } from '../utils/exec.js';
-
-let isYolo = false;
-export function setYolo(yolo) { isYolo = yolo; }
+import { getIsYolo } from '../utils/state.js';
 
 export async function npmTool(command) {
   checkNpmCommand(command);
 
-  if (!isYolo) {
+  if (!getIsYolo()) {
     const ok = await confirmAction(`Allow running 'npm ${command}'?`);
     if (!ok) throw new Error("User denied npm operation.");
   }
@@ -18,7 +16,7 @@ export async function npmTool(command) {
       arg.startsWith('"') && arg.endsWith('"') ? arg.slice(1, -1) : arg
     ) || [];
     
-    const { stdout, stderr } = await execFileAsync('npm', args, { cwd: process.cwd(), shell: false });
+    const { stdout, stderr } = await execFileAsync('npm', args);
     return `stdout:\n${stdout}\nstderr:\n${stderr}`;
   } catch (error) {
     return `Error: ${error.message}\nstdout:\n${error.stdout || ''}\nstderr:\n${error.stderr || ''}`;

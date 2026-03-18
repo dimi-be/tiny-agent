@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import * as tools from "./tools/index.js";
+import { setYolo, setPlainText } from "./utils/state.js";
 
 export async function runAgentLoop({
   model,
@@ -10,8 +11,8 @@ export async function runAgentLoop({
   plan,
   plainText,
 }) {
-  tools.setYolo(yolo);
-  if (tools.setPlainText) tools.setPlainText(plainText);
+  setYolo(yolo);
+  setPlainText(plainText);
 
   const openai = new OpenAI({
     apiKey: "not-needed",

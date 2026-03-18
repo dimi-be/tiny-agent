@@ -4,6 +4,12 @@ import fs from 'fs/promises';
 import path from 'path';
 
 export async function checkWithEslint(filePath) {
+  try {
+    await fs.access(filePath);
+  } catch (err) {
+    return `Syntax Error (Node Syntax): ${err.message}`;
+  }
+
   // Instead of relying on a complex ESLint CLI which changed in v9, 
   // we first run node -c to catch duplicate declarations and basic scoping errors.
   try {

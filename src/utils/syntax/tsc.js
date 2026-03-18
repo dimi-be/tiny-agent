@@ -1,6 +1,13 @@
 import { execFileAsync } from '../exec.js';
+import fs from 'fs/promises';
 
 export async function checkWithTsc(filePath) {
+  try {
+    await fs.access(filePath);
+  } catch (err) {
+    return `Syntax Error (TSC): ${err.message}`;
+  }
+
   try {
     // --isolatedModules: treats file as a standalone unit
     // --noEmit: checks only, doesn't write files

@@ -1,6 +1,13 @@
 import { execFileAsync } from '../exec.js';
+import fs from 'fs/promises';
 
 export async function checkWithPython(filePath) {
+  try {
+    await fs.access(filePath);
+  } catch (err) {
+    return `Syntax Error (Python): ${err.message}`;
+  }
+
   try {
     try {
       await execFileAsync('python3', ['-m', 'py_compile', filePath]);

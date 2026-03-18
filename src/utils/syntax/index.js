@@ -22,6 +22,10 @@ export async function checkSyntax(filePath) {
     }
 
     if (ext === '.py') {
+      // Stage 1: Tree-sitter
+      const tsError = await checkWithTreeSitter(filePath, ext);
+      if (tsError) return tsError;
+
       const error = await checkWithPython(filePath);
       if (error) return error;
       return 'Syntax check passed.';

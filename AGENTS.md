@@ -15,6 +15,7 @@
 #### Imports
 - Use ES module syntax (`import`/`export`)
 - **Mandatory**: Include the `.js` file extension for all local relative imports (e.g., `import { foo } from './bar.js'`)
+- All shell command or process execution must use the shared `execFileAsync` wrapper from `src/utils/exec.js` to prevent command injection.
 - Group imports by type (built-ins, external dependencies, internal modules)
 - Sort alphabetically within each group
 - Import specific functions rather than entire modules when possible
@@ -43,6 +44,7 @@
 
 #### Security Considerations
 - All filesystem operations must use `securePath()` to prevent path traversal attacks
+- All process executions must use the secured `execFileAsync` wrapper from `src/utils/exec.js` which defaults to `{ shell: false }` to prevent command injection.
 - Read-before-write policy: files must be read before they can be written to
 - YOLO mode bypasses user confirmation but still enforces security checks
 - npm commands are allowed without restrictions (as per current implementation)
