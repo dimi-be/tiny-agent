@@ -7,10 +7,14 @@
 - Run a single test file: `node --test test/security.test.js`
 - Run specific test function: `node --test --test-name-pattern="securePath blocks paths outside CWD" test/security.test.js`
 
+### Building
+- Build the project: `npm run build` (uses `esbuild` to bundle to `dist/tiny-agent.js`)
+
 ### Code Style Guidelines
 
 #### Imports
-- Use ES6 module syntax with `require()` for CommonJS modules
+- Use ES module syntax (`import`/`export`)
+- **Mandatory**: Include the `.js` file extension for all local relative imports (e.g., `import { foo } from './bar.js'`)
 - Group imports by type (built-ins, external dependencies, internal modules)
 - Sort alphabetically within each group
 - Import specific functions rather than entire modules when possible

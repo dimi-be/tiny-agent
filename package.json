@@ -8,18 +8,18 @@
   },
   "scripts": {
     "test": "node --test",
-    "build": "ncc build src/index.js -o dist -m && mv dist/index.js dist/tiny-agent.js && rm -f dist/AGENTS.md dist/.gitignore"
+    "build": "esbuild src/index.js --bundle --platform=node --format=esm --outfile=dist/tiny-agent.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "dependencies": {
     "ignore": "^7.0.5",
     "openai": "^6.31.0",
     "yargs": "^18.0.0"
   },
   "devDependencies": {
-    "@vercel/ncc": "^0.38.4"
+    "esbuild": "^0.25.0"
   }
 }

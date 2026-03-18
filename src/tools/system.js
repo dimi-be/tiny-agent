@@ -1,14 +1,14 @@
-const { exec } = require('child_process');
-const { promisify } = require('util');
-const { checkNpmCommand } = require('../utils/security');
-const { confirmAction } = require('../utils/ui');
+import { exec } from 'child_process';
+import { promisify } from 'util';
+import { checkNpmCommand } from '../utils/security.js';
+import { confirmAction } from '../utils/ui.js';
 
 const execAsync = promisify(exec);
 
 let isYolo = false;
-function setYolo(yolo) { isYolo = yolo; }
+export function setYolo(yolo) { isYolo = yolo; }
 
-async function npmTool(command) {
+export async function npmTool(command) {
   checkNpmCommand(command);
 
   if (!isYolo) {
@@ -23,5 +23,3 @@ async function npmTool(command) {
     return `Error: ${error.message}\nstdout:\n${error.stdout}\nstderr:\n${error.stderr}`;
   }
 }
-
-module.exports = { setYolo, npmTool };

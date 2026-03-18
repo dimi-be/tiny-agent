@@ -1,9 +1,9 @@
-const fs = require('fs/promises');
-const { securePath } = require('../../utils/security');
-const { confirmAction } = require('../../utils/ui');
-const { getIsYolo } = require('./state');
+import fs from 'fs/promises';
+import { securePath } from '../../utils/security.js';
+import { confirmAction } from '../../utils/ui.js';
+import { getIsYolo } from './state.js';
 
-async function mkdirTool(dirPath) {
+export default async function mkdirTool(dirPath) {
   const resolved = securePath(dirPath);
   if (!getIsYolo()) {
     const ok = await confirmAction(`Allow creating directory ${dirPath}?`);
@@ -12,5 +12,3 @@ async function mkdirTool(dirPath) {
   await fs.mkdir(resolved, { recursive: true });
   return `Created directory ${dirPath}`;
 }
-
-module.exports = mkdirTool;

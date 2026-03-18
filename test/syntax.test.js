@@ -1,8 +1,8 @@
-const test = require('node:test');
-const assert = require('node:assert');
-const fs = require('fs/promises');
-const path = require('path');
-const { checkSyntax } = require('../src/utils/syntax');
+import test from 'node:test';
+import assert from 'node:assert';
+import fs from 'fs/promises';
+import path from 'path';
+import { checkSyntax } from '../src/utils/syntax.js';
 
 test('Syntax Checking Utility', async (t) => {
   const tmpDir = path.join(process.cwd(), 'test-tmp-syntax');

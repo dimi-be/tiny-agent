@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
-const yargs = require("yargs/yargs");
-const { hideBin } = require("yargs/helpers");
-const fs = require("fs/promises");
-const { runAgentLoop } = require("./agent");
+import yargs from "yargs/yargs";
+import { hideBin } from "yargs/helpers";
+import fs from "fs/promises";
+import path from "path";
+import { runAgentLoop } from "./agent.js";
 
 async function main() {
   const argv = yargs(hideBin(process.argv))
@@ -75,7 +76,7 @@ async function main() {
   }
 
   try {
-    const rootAgentsFile = require("path").join(process.cwd(), "AGENTS.md");
+    const rootAgentsFile = path.join(process.cwd(), "AGENTS.md");
     const rootAgentsMdContent = await fs.readFile(rootAgentsFile, "utf-8");
     systemPrompt += `\n\n# PROJECT INSTRUCTIONS (FROM ROOT AGENTS.md):\n${rootAgentsMdContent}\n\n[SYSTEM NOTE: The content of the root 'AGENTS.md' has already been included in your system prompt above. You do not need to read it using a tool.]`;
   } catch (err) {

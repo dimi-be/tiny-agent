@@ -1,11 +1,11 @@
-const { exec } = require('child_process');
-const { promisify } = require('util');
-const path = require('path');
-const fs = require('fs/promises');
+import { exec } from 'child_process';
+import { promisify } from 'util';
+import path from 'path';
+import fs from 'fs/promises';
 
 const execAsync = promisify(exec);
 
-async function checkSyntax(filePath) {
+export async function checkSyntax(filePath) {
   const ext = path.extname(filePath).toLowerCase();
 
   try {
@@ -49,5 +49,3 @@ async function checkSyntax(filePath) {
     return `Syntax Error:\n${error.stderr || error.message}`;
   }
 }
-
-module.exports = { checkSyntax };

@@ -1,11 +1,11 @@
-const fs = require('fs/promises');
-const path = require('path');
-const { securePath, hasBeenRead } = require('../../utils/security');
-const { confirmAction } = require('../../utils/ui');
-const { getIsYolo } = require('./state');
-const { checkSyntax } = require('../../utils/syntax');
+import fs from 'fs/promises';
+import path from 'path';
+import { securePath, hasBeenRead } from '../../utils/security.js';
+import { confirmAction } from '../../utils/ui.js';
+import { getIsYolo } from './state.js';
+import { checkSyntax } from '../../utils/syntax.js';
 
-async function writeTool(filePath, content) {
+export default async function writeTool(filePath, content) {
   const resolved = securePath(filePath);
   try {
     const stats = await fs.stat(resolved);
@@ -27,5 +27,3 @@ async function writeTool(filePath, content) {
   const syntaxResult = await checkSyntax(resolved);
   return `Successfully wrote to ${filePath}\n${syntaxResult}`;
 }
-
-module.exports = writeTool;

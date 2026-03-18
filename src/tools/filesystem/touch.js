@@ -1,7 +1,7 @@
-const fs = require('fs/promises');
-const { securePath } = require('../../utils/security');
+import fs from 'fs/promises';
+import { securePath } from '../../utils/security.js';
 
-async function touchTool(filePath) {
+export default async function touchTool(filePath) {
   const resolved = securePath(filePath);
   try {
     const time = new Date();
@@ -15,5 +15,3 @@ async function touchTool(filePath) {
   }
   return `Touched ${filePath}`;
 }
-
-module.exports = touchTool;

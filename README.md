@@ -43,10 +43,29 @@ Tiny Agent is built to be "light" on the AI side by providing a targeted toolset
    npm install
    ```
 
-3. (Optional) Link the package globally:
+3. Build the project:
+   ```bash
+   npm run build
+   ```
+
+4. (Optional) Link the package globally:
    ```bash
    npm link
    ```
+
+## 🏗 Build
+
+The project is built using `esbuild` to produce a single-file executable in `dist/tiny-agent.js`.
+
+```bash
+npm run build
+```
+
+The build process:
+- Bundles all dependencies.
+- Sets the platform to Node.js.
+- Generates an ES Module output.
+- Cleans up temporary build files.
 
 ## 🛠 Usage
 

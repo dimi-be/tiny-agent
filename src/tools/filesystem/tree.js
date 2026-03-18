@@ -1,10 +1,10 @@
-const fs = require('fs/promises');
-const path = require('path');
-const ignore = require('ignore');
-const { securePath } = require('../../utils/security');
-const { directoryHasAgentsMd } = require('../../utils/agentsMd');
+import fs from 'fs/promises';
+import path from 'path';
+import ignore from 'ignore';
+import { securePath } from '../../utils/security.js';
+import { directoryHasAgentsMd } from '../../utils/agentsMd.js';
 
-async function treeTool(dirPath = '.') {
+export default async function treeTool(dirPath = '.') {
   const resolved = securePath(dirPath);
   
   const ig = ignore();
@@ -63,5 +63,3 @@ async function treeTool(dirPath = '.') {
   const treeBody = await buildTree(resolved);
   return `${rootName}\n${treeBody}`.trim() || 'Empty directory';
 }
-
-module.exports = treeTool;

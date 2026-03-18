@@ -1,6 +1,6 @@
-const readline = require('readline/promises');
+import readline from 'node:readline/promises';
 
-async function confirmAction(promptText) {
+export async function confirmAction(promptText) {
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
@@ -10,5 +10,3 @@ async function confirmAction(promptText) {
   rl.close();
   return answer.toLowerCase() === 'y' || answer.toLowerCase() === 'yes';
 }
-
-module.exports = { confirmAction };

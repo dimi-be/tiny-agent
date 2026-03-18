@@ -1,7 +1,7 @@
-const OpenAI = require("openai");
-const tools = require("./tools/index");
+import OpenAI from "openai";
+import * as tools from "./tools/index.js";
 
-async function runAgentLoop({ model, url, systemPrompt, prompt, yolo, plan }) {
+export async function runAgentLoop({ model, url, systemPrompt, prompt, yolo, plan }) {
   tools.setYolo(yolo);
 
   const openai = new OpenAI({
@@ -86,5 +86,3 @@ async function runAgentLoop({ model, url, systemPrompt, prompt, yolo, plan }) {
     }
   }
 }
-
-module.exports = { runAgentLoop };

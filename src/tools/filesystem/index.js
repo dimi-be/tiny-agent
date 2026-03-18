@@ -1,14 +1,14 @@
-const { setYolo } = require('./state');
-const readFileTool = require('./read');
-const grepTool = require('./grep');
-const lsTool = require('./ls');
-const treeTool = require('./tree');
-const writeTool = require('./write');
-const mkdirTool = require('./mkdir');
-const touchTool = require('./touch');
-const rmTool = require('./rm');
+import { setYolo } from './state.js';
+import readFileTool from './read.js';
+import grepTool from './grep.js';
+import lsTool from './ls.js';
+import treeTool from './tree.js';
+import writeTool from './write.js';
+import mkdirTool from './mkdir.js';
+import touchTool from './touch.js';
+import rmTool from './rm.js';
 
-module.exports = {
+export {
   setYolo,
   readFileTool,
   grepTool,

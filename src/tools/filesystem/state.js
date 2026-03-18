@@ -1,5 +1,3 @@
 let isYolo = false;
-function setYolo(yolo) { isYolo = yolo; }
-function getIsYolo() { return isYolo; }
-
-module.exports = { setYolo, getIsYolo };
+export function setYolo(yolo) { isYolo = yolo; }
+export function getIsYolo() { return isYolo; }

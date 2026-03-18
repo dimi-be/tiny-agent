@@ -1,12 +1,12 @@
-const filesystem = require('./filesystem');
-const system = require('./system');
+import * as filesystem from './filesystem/index.js';
+import * as system from './system.js';
 
-function setYolo(yolo) {
+export function setYolo(yolo) {
   filesystem.setYolo(yolo);
   system.setYolo(yolo);
 }
 
-const schemas = [
+export const schemas = [
   {
     type: "function",
     function: {
@@ -138,7 +138,7 @@ const schemas = [
   }
 ];
 
-const handlers = {
+export const handlers = {
   read: async (args) => await filesystem.readFileTool(args.filePath),
   grep: async (args) => await filesystem.grepTool(args.pattern, args.filePath),
   ls: async (args) => await filesystem.lsTool(args.dirPath),
@@ -149,5 +149,3 @@ const handlers = {
   rm: async (args) => await filesystem.rmTool(args.filePath, args.recursive),
   npm: async (args) => await system.npmTool(args.command)
 };
-
-module.exports = { schemas, handlers, setYolo };

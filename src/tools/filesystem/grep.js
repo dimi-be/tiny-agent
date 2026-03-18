@@ -1,7 +1,7 @@
-const fs = require('fs/promises');
-const { securePath, markAsRead } = require('../../utils/security');
+import fs from 'fs/promises';
+import { securePath, markAsRead } from '../../utils/security.js';
 
-async function grepTool(pattern, filePath) {
+export default async function grepTool(pattern, filePath) {
   const resolved = securePath(filePath);
   const content = await fs.readFile(resolved, 'utf-8');
   markAsRead(resolved);
@@ -15,5 +15,3 @@ async function grepTool(pattern, filePath) {
   });
   return matches.join('\n');
 }
-
-module.exports = grepTool;

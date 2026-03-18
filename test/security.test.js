@@ -1,7 +1,7 @@
-const test = require('node:test');
-const assert = require('node:assert');
-const path = require('path');
-const { securePath, markAsRead, hasBeenRead, checkNpmCommand } = require('../src/utils/security');
+import test from 'node:test';
+import assert from 'node:assert';
+import path from 'path';
+import { securePath, markAsRead, hasBeenRead, checkNpmCommand } from '../src/utils/security.js';
 
 test('Security Utility Tests', async (t) => {
   await t.test('securePath blocks paths outside CWD', () => {

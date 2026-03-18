@@ -1,9 +1,9 @@
-const fs = require('fs/promises');
-const path = require('path');
-const { securePath } = require('../../utils/security');
-const { directoryHasAgentsMd } = require('../../utils/agentsMd');
+import fs from 'fs/promises';
+import path from 'path';
+import { securePath } from '../../utils/security.js';
+import { directoryHasAgentsMd } from '../../utils/agentsMd.js';
 
-async function lsTool(dirPath = '.') {
+export default async function lsTool(dirPath = '.') {
   const resolved = securePath(dirPath);
   const entries = await fs.readdir(resolved, { withFileTypes: true });
   
@@ -23,5 +23,3 @@ async function lsTool(dirPath = '.') {
 
   return formattedEntries.join('\n') || 'Directory is empty';
 }
-
-module.exports = lsTool;

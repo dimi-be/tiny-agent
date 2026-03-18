@@ -1,8 +1,8 @@
-const fs = require('fs/promises');
-const { securePath, markAsRead } = require('../../utils/security');
-const { getAgentsWarning } = require('../../utils/agentsMd');
+import fs from 'fs/promises';
+import { securePath, markAsRead } from '../../utils/security.js';
+import { getAgentsWarning } from '../../utils/agentsMd.js';
 
-async function readFileTool(filePath) {
+export default async function readFileTool(filePath) {
   const resolved = securePath(filePath);
   const content = await fs.readFile(resolved, 'utf-8');
   markAsRead(resolved);
@@ -10,5 +10,3 @@ async function readFileTool(filePath) {
   const warning = await getAgentsWarning(resolved);
   return warning + content;
 }
-
-module.exports = readFileTool;
