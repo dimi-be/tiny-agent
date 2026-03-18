@@ -1,10 +1,10 @@
 # Tiny Agent
 
-A lightweight, security-conscious CLI "Worker" agent designed to perform local file implementation tasks using a local LLM (like LM Studio, Ollama, or LocalAI).
+A lightweight, CLI Worker agent designed to perform local file implementation tasks using local or small LLMs via OpenAI-compatible APIs.
 
 ## 🚀 Overview
 
-Tiny Agent is built to be "light" on the AI side by providing a targeted toolset and minimal system prompt. It acts as an execution layer that can take instructions and perform safe, local file operations with built-in validation loops.
+Tiny Agent is designed to be "light" on the AI side by providing a small toolset and minimal system prompt. It was born out of the need to have an agent that worked well with LLMs that have a small context window. It does not support interactive mode. Its main purpose is to be a tool that is easily integrated in pipelines to let a local AI perform limited tasks.
 
 ## ✨ Features
 
@@ -26,7 +26,7 @@ Tiny Agent is built to be "light" on the AI side by providing a targeted toolset
   - `grep`: Fast pattern searching with line numbers.
   - `write` / `mkdir` / `touch` / `rm`: Filesystem manipulation.
   - `npm`: Execute any npm command directly.
-- **Token Tracking**: Real-time monitoring of current context window usage after every tool call and session cumulative totals.
+- **Token Tracking**: Prints the current context size after every tool call and gives a summary of context and total tokens at the end.
 
 ## 📦 Installation
 
@@ -44,6 +44,7 @@ Tiny Agent is built to be "light" on the AI side by providing a targeted toolset
    ```
 
 3. Build the project:
+
    ```bash
    npm run build
    ```
@@ -52,20 +53,6 @@ Tiny Agent is built to be "light" on the AI side by providing a targeted toolset
    ```bash
    npm link
    ```
-
-## 🏗 Build
-
-The project is built using `esbuild` to produce a single-file executable in `dist/tiny-agent.js`.
-
-```bash
-npm run build
-```
-
-The build process:
-- Bundles all dependencies.
-- Sets the platform to Node.js.
-- Generates an ES Module output.
-- Cleans up temporary build files.
 
 ## 🛠 Usage
 
