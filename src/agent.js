@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import fs from "fs/promises";
 import * as tools from "./tools/index.js";
 import { setYolo, setPlainText } from "./utils/state.js";
 
@@ -10,9 +11,20 @@ export async function runAgentLoop({
   yolo,
   plan,
   plainText,
+  logPath,
 }) {
   setYolo(yolo);
   setPlainText(plainText);
+
+  const writeToLog = async (data) => {
+    if (logPath) {
+      await fs.appendFile(logPath, JSON.stringify(data, null, 2) + "\n\n", "utf8");
+    }
+  };
+
+  if (logPath) {
+    await fs.writeFile(logPath, "", "utf8"); // Initialize/Clear log file
+  }
 
   const openai = new OpenAI({
     apiKey: "not-needed",
@@ -31,6 +43,10 @@ export async function runAgentLoop({
     { role: "user", content: prompt },
   ];
 
+  for (const msg of messages) {
+    await writeToLog(msg);
+  }
+
   while (true) {
     const response = await openai.chat.completions.create({
       model: model,
@@ -44,6 +60,7 @@ export async function runAgentLoop({
     }
     const message = response.choices[0].message;
     messages.push(message);
+    await writeToLog(message);
 
     if (message.content) {
       console.log(message.content.trim());
@@ -76,20 +93,24 @@ export async function runAgentLoop({
 
         const result = await handler(functionArgs);
 
-        messages.push({
+        const toolMessage = {
           tool_call_id: toolCall.id,
           role: "tool",
           name: functionName,
           content: String(result),
-        });
+        };
+        messages.push(toolMessage);
+        await writeToLog(toolMessage);
       } catch (error) {
         console.error(`Tool execution error: ${error.message}`);
-        messages.push({
+        const toolErrorMessage = {
           tool_call_id: toolCall.id,
           role: "tool",
           name: functionName,
           content: `Error: ${error.message}`,
-        });
+        };
+        messages.push(toolErrorMessage);
+        await writeToLog(toolErrorMessage);
       }
     }
   }

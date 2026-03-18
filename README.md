@@ -69,6 +69,8 @@ tiny-agent -m <model_name> [options] "PROMPT"
 | `--system` | `-s`  | Path to a text file containing a custom system prompt.                                | (Internal default)         |
 | `--plan`   | `-p`  | **Plan Mode**: Restricts the agent to read-only tools (`ls`, `tree`, `read`, `grep`). | `false`                    |
 | `--yolo`   | `-y`  | **YOLO Mode**: Bypasses manual confirmations for writes and deletes.                  | `false`                    |
+| `--plain-text` | `-t` | **Plain Text Mode**: Disables automatic syntax checking after writes.              | `false`                    |
+| `--log`    | `-l`  | Path to a log file to store the conversation.                                         |                            |
 
 ### Examples
 
