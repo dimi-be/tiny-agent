@@ -6,6 +6,10 @@ export function setYolo(yolo) {
   system.setYolo(yolo);
 }
 
+export function setPlainText(plainText) {
+  filesystem.setPlainText(plainText);
+}
+
 export const schemas = [
   {
     type: "function",

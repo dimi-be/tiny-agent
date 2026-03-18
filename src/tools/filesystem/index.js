@@ -1,4 +1,4 @@
-import { setYolo } from './state.js';
+import { setYolo, setPlainText } from './state.js';
 import readFileTool from './read.js';
 import grepTool from './grep.js';
 import lsTool from './ls.js';
@@ -10,6 +10,7 @@ import rmTool from './rm.js';
 
 export {
   setYolo,
+  setPlainText,
   readFileTool,
   grepTool,
   lsTool,

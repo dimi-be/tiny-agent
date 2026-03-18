@@ -1,0 +1,15 @@
+import { execFileAsync } from '../exec.js';
+
+export async function checkWithPython(filePath) {
+  try {
+    try {
+      await execFileAsync('python3', ['-m', 'py_compile', filePath]);
+    } catch (e) {
+      await execFileAsync('python', ['-m', 'py_compile', filePath]);
+    }
+    return null; // Passed
+  } catch (error) {
+    if (error.code === 127 || error.code === 'ENOENT') return null; // python not found
+    return `**CRITICAL: The code you wrote has errors.**\n**Tool:** [Python]\n**Message:**\n${error.stderr || error.message}`;
+  }
+}

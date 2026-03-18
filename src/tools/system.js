@@ -1,9 +1,6 @@
-import { execFile } from 'child_process';
-import { promisify } from 'util';
 import { checkNpmCommand } from '../utils/security.js';
 import { confirmAction } from '../utils/ui.js';
-
-const execFileAsync = promisify(execFile);
+import { execFileAsync } from '../utils/exec.js';
 
 let isYolo = false;
 export function setYolo(yolo) { isYolo = yolo; }

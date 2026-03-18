@@ -8,8 +8,10 @@ export async function runAgentLoop({
   prompt,
   yolo,
   plan,
+  plainText,
 }) {
   tools.setYolo(yolo);
+  if (tools.setPlainText) tools.setPlainText(plainText);
 
   const openai = new OpenAI({
     apiKey: "not-needed",
