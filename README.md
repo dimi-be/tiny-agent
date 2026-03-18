@@ -92,10 +92,6 @@ The project includes unit tests for security, syntax checking, and `AGENTS.md` l
 npm test
 ```
 
-## Issues
-
-- [] Syntax validation not working: Command failed: npx --no-install tsc --noEmit
-
 ## ⚖️ License
 
 MIT
