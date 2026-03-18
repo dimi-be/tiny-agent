@@ -62,15 +62,15 @@ tiny-agent -m <model_name> [options] "PROMPT"
 
 ### Options
 
-| Flag       | Alias | Description                                                                           | Default                    |
-| :--------- | :---- | :------------------------------------------------------------------------------------ | :------------------------- |
-| `--model`  | `-m`  | **(Required)** The name of the model loaded in your LLM server.                       |                            |
-| `--url`    | `-u`  | The local API endpoint.                                                               | `http://localhost:1234/v1` |
-| `--system` | `-s`  | Path to a text file containing a custom system prompt.                                | (Internal default)         |
-| `--plan`   | `-p`  | **Plan Mode**: Restricts the agent to read-only tools (`ls`, `tree`, `read`, `grep`). | `false`                    |
-| `--yolo`   | `-y`  | **YOLO Mode**: Bypasses manual confirmations for writes and deletes.                  | `false`                    |
-| `--plain-text` | `-t` | **Plain Text Mode**: Disables automatic syntax checking after writes.              | `false`                    |
-| `--log`    | `-l`  | Path to a log file to store the conversation.                                         |                            |
+| Flag           | Alias | Description                                                                           | Default                    |
+| :------------- | :---- | :------------------------------------------------------------------------------------ | :------------------------- |
+| `--model`      | `-m`  | **(Required)** The name of the model loaded in your LLM server.                       |                            |
+| `--url`        | `-u`  | The local API endpoint.                                                               | `http://localhost:1234/v1` |
+| `--system`     | `-s`  | Path to a text file containing a custom system prompt.                                | (Internal default)         |
+| `--plan`       | `-p`  | **Plan Mode**: Restricts the agent to read-only tools (`ls`, `tree`, `read`, `grep`). | `false`                    |
+| `--yolo`       | `-y`  | **YOLO Mode**: Bypasses manual confirmations for writes and deletes.                  | `false`                    |
+| `--plain-text` | `-t`  | **Plain Text Mode**: Disables automatic syntax checking after writes.                 | `false`                    |
+| `--log`        | `-l`  | Path to a log file to store the conversation.                                         |                            |
 
 ### Examples
 
@@ -93,6 +93,23 @@ The project includes unit tests for security, syntax checking, and `AGENTS.md` l
 ```bash
 npm test
 ```
+
+## Issues
+
+- Behavior when creating new files is wasting too many calls
+  Touching an **empty** file should add it to sessionState
+  Example:
+  - Let me create a new file for our prime sieve implementation:
+  - > Executing tool: touch with args: {"filePath":"prime-sieve.js"} Context: 1030 tokens
+  - Now I'll implement the Sieve of Eratosthenes algorithm in the file. This is an efficient way to find all primes up to a given number.
+  - > Executing tool: write with args: {"filePath":"prime-sieve.js","content":"[Content truncated]"} Context: 1528 tokens
+  - Tool execution error: The file 'prime-sieve.js' already exists. You must read it first using the 'read' tool before overwriting it.
+  - I need to read the existing file first before I can overwrite it:
+  - > Executing tool: read with args: {"filePath":"prime-sieve.js"} Context: 1608 tokens
+  - It seems the file exists but is empty. Let me overwrite it with our implementation:
+  - > Executing tool: write with args: {"filePath":"prime-sieve.js","content":"[Content truncated]"} Context: 2083 tokens
+- When a write triggers a create this should also add the file to sessionState
+- Session state should be called filesReadState
 
 ## ⚖️ License
 
