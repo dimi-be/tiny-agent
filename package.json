@@ -4,11 +4,11 @@
   "description": "",
   "main": "src/index.js",
   "bin": {
-    "tiny-agent": "src/index.js"
+    "tiny-agent": "dist/index.js"
   },
   "scripts": {
     "test": "node --test",
-    "build": "esbuild src/index.js --bundle --platform=node --format=esm --outfile=dist/tiny-agent.js"
+    "build": "esbuild src/index.js --bundle --platform=node --format=esm --outfile=dist/index.js"
   },
   "keywords": [],
   "author": "",
