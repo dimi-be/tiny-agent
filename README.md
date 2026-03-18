@@ -22,7 +22,7 @@ Tiny Agent is built to be "light" on the AI side by providing a targeted toolset
   - **Read-Before-Write Policy**: Ensures the agent has inspected a file's content before being allowed to overwrite it.
 - **Rich Toolset**:
   - `ls` / `tree`: Explore directory structures (respects `.gitignore`).
-  - `read` / `readLines`: Efficient file reading (crucial for large files).
+  - `read`: Efficient file reading.
   - `grep`: Fast pattern searching with line numbers.
   - `write` / `mkdir` / `touch` / `rm`: Filesystem manipulation.
   - `npm`: Execute any npm command directly.
