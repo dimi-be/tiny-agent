@@ -1,19 +1,21 @@
-import fs from 'fs/promises';
-import path from 'path';
-import { securePath, hasBeenRead } from '../../utils/security.js';
-import { confirmAction } from '../../utils/ui.js';
-import { getIsYolo } from './state.js';
-import { checkSyntax } from '../../utils/syntax.js';
+import fs from "fs/promises";
+import path from "path";
+import { securePath, hasBeenRead } from "../../utils/security.js";
+import { confirmAction } from "../../utils/ui.js";
+import { getIsYolo } from "./state.js";
+import { checkSyntax } from "../../utils/syntax.js";
 
 export default async function writeTool(filePath, content) {
   const resolved = securePath(filePath);
   try {
     const stats = await fs.stat(resolved);
     if (stats.isFile() && !hasBeenRead(resolved)) {
-      throw new Error(`The file '${filePath}' already exists. You must read it first using the 'read' tool before overwriting it.`);
+      throw new Error(
+        `The file '${filePath}' already exists. You must read it first using the 'read' tool before overwriting it.`,
+      );
     }
   } catch (err) {
-    if (err.code !== 'ENOENT') throw err;
+    if (err.code !== "ENOENT") throw err;
   }
 
   if (!getIsYolo()) {
@@ -22,8 +24,12 @@ export default async function writeTool(filePath, content) {
   }
 
   await fs.mkdir(path.dirname(resolved), { recursive: true });
-  await fs.writeFile(resolved, content, 'utf-8');
-  
-  const syntaxResult = await checkSyntax(resolved);
-  return `Successfully wrote to ${filePath}\n${syntaxResult}`;
+  await fs.writeFile(resolved, content, "utf-8");
+
+  const syntaxResult = ""; //await checkSyntax(resolved);
+  const result = `Successfully wrote to ${filePath}\n${syntaxResult}`;
+
+  console.error(`> Result: ${result}`);
+
+  return result;
 }

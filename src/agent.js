@@ -1,7 +1,14 @@
 import OpenAI from "openai";
 import * as tools from "./tools/index.js";
 
-export async function runAgentLoop({ model, url, systemPrompt, prompt, yolo, plan }) {
+export async function runAgentLoop({
+  model,
+  url,
+  systemPrompt,
+  prompt,
+  yolo,
+  plan,
+}) {
   tools.setYolo(yolo);
 
   const openai = new OpenAI({
@@ -11,9 +18,7 @@ export async function runAgentLoop({ model, url, systemPrompt, prompt, yolo, pla
 
   const activeTools = plan
     ? tools.schemas.filter((schema) =>
-        ["read", "grep", "ls", "tree"].includes(
-          schema.function.name,
-        ),
+        ["read", "grep", "ls", "tree"].includes(schema.function.name),
       )
     : tools.schemas;
 
