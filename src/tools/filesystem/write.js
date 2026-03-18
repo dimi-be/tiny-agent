@@ -10,7 +10,7 @@ export default async function writeTool(filePath, content) {
   try {
     const stats = await fs.stat(resolved);
     if (stats.isFile() && !hasBeenRead(resolved)) {
-      throw new Error(`You must read this file before overwriting it: ${filePath}`);
+      throw new Error(`The file '${filePath}' already exists. You must read it first using the 'read' tool before overwriting it.`);
     }
   } catch (err) {
     if (err.code !== 'ENOENT') throw err;

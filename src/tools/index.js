@@ -68,7 +68,7 @@ export const schemas = [
     type: "function",
     function: {
       name: "write",
-      description: "Writes or overwrites a file. Automatically creates directories. File MUST be read first if it exists.",
+      description: "Writes a new file or overwrites an existing one. Automatically creates directories. If the file already exists, it MUST be read first using the 'read' tool.",
       parameters: {
         type: "object",
         properties: {
