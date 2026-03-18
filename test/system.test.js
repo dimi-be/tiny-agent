@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert';
 import fs from 'fs/promises';
 import path from 'path';
-import { npmTool, setYolo } from '../src/tools/system.js';
+import { npmTool } from '../src/tools/system.js';
+import { setYolo } from '../src/utils/state.js';
 
 test('System Tool (npm) Security Tests', async (t) => {
   // Enable YOLO mode for tests to skip confirmation prompts

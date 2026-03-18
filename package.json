@@ -15,8 +15,10 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@repomix/tree-sitter-wasms": "^0.1.16",
     "ignore": "^7.0.5",
     "openai": "^6.31.0",
+    "web-tree-sitter": "^0.26.7",
     "yargs": "^18.0.0"
   },
   "devDependencies": {

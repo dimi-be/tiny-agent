@@ -2,8 +2,8 @@ import fs from "fs/promises";
 import path from "path";
 import { securePath, hasBeenRead } from "../../utils/security.js";
 import { confirmAction } from "../../utils/ui.js";
-import { getIsYolo } from "./state.js";
-import { checkSyntax } from "../../utils/syntax.js";
+import { getIsYolo, getIsPlainText } from "../../utils/state.js";
+import { checkSyntax } from "../../utils/syntax/index.js";
 
 export default async function writeTool(filePath, content) {
   const resolved = securePath(filePath);
@@ -26,8 +26,8 @@ export default async function writeTool(filePath, content) {
   await fs.mkdir(path.dirname(resolved), { recursive: true });
   await fs.writeFile(resolved, content, "utf-8");
 
-  const syntaxResult = ""; //await checkSyntax(resolved);
-  const result = `Successfully wrote to ${filePath}\n${syntaxResult}`;
+  const syntaxResult = getIsPlainText() ? '' : await checkSyntax(resolved);
+  const result = syntaxResult ? `Successfully wrote to ${filePath}\n${syntaxResult}` : `Successfully wrote to ${filePath}`;
 
   console.error(`> Result: ${result}`);
 

@@ -37,6 +37,17 @@ async function main() {
       description: "Plan mode: restricts the agent to read-only tools",
       default: false
     })
+    .option("plain-text", {
+      alias: "t",
+      type: "boolean",
+      description: "Disable automatic syntax checking after writes",
+      default: false
+    })
+    .option("log", {
+      alias: "l",
+      type: "string",
+      description: "Path to a log file to store the conversation",
+    })
     .demandCommand(1, "You must provide a PROMPT as the last argument")
     .parse();
 
@@ -90,7 +101,9 @@ async function main() {
       systemPrompt,
       prompt: promptText,
       yolo: argv.yolo,
-      plan: argv.plan
+      plan: argv.plan,
+      plainText: argv.plainText,
+      logPath: argv.log
     });
   } catch (error) {
     console.error(`\nAgent Error: ${error.message}`);

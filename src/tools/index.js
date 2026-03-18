@@ -1,9 +1,13 @@
 import * as filesystem from './filesystem/index.js';
 import * as system from './system.js';
+import * as state from '../utils/state.js';
 
 export function setYolo(yolo) {
-  filesystem.setYolo(yolo);
-  system.setYolo(yolo);
+  state.setYolo(yolo);
+}
+
+export function setPlainText(plainText) {
+  state.setPlainText(plainText);
 }
 
 export const schemas = [

@@ -1,9 +1,11 @@
-import path from 'path';
+import path from "path";
 
 export function securePath(targetPath) {
   const resolved = path.resolve(process.cwd(), targetPath);
   if (!resolved.startsWith(process.cwd())) {
-    throw new Error('Security Error: Cannot access paths outside the current working directory.');
+    throw new Error(
+      "Security Error: Cannot access paths outside the current working directory.",
+    );
   }
   return resolved;
 }
@@ -16,9 +18,4 @@ export function markAsRead(targetPath) {
 
 export function hasBeenRead(targetPath) {
   return sessionState.has(securePath(targetPath));
-}
-
-export function checkNpmCommand(command) {
-  // All npm commands are now allowed
-  return true;
 }
