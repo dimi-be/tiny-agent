@@ -1,9 +1,9 @@
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
 import { checkNpmCommand } from '../utils/security.js';
 import { confirmAction } from '../utils/ui.js';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 let isYolo = false;
 export function setYolo(yolo) { isYolo = yolo; }
@@ -17,9 +17,13 @@ export async function npmTool(command) {
   }
 
   try {
-    const { stdout, stderr } = await execAsync(`npm ${command}`, { cwd: process.cwd() });
+    const args = command.match(/(?:[^\s"]+|"[^"]*")+/g)?.map(arg => 
+      arg.startsWith('"') && arg.endsWith('"') ? arg.slice(1, -1) : arg
+    ) || [];
+    
+    const { stdout, stderr } = await execFileAsync('npm', args, { cwd: process.cwd(), shell: false });
     return `stdout:\n${stdout}\nstderr:\n${stderr}`;
   } catch (error) {
-    return `Error: ${error.message}\nstdout:\n${error.stdout}\nstderr:\n${error.stderr}`;
+    return `Error: ${error.message}\nstdout:\n${error.stdout || ''}\nstderr:\n${error.stderr || ''}`;
   }
 }
