@@ -4,7 +4,9 @@ import fs from 'fs/promises';
 import path from 'path';
 import writeTool from '../src/tools/filesystem/write.js';
 import readFileTool from '../src/tools/filesystem/read.js';
+import touchTool from '../src/tools/filesystem/touch.js';
 import { setYolo, setPlainText } from '../src/utils/state.js';
+import { resetFilesReadState } from '../src/utils/security.js';
 
 test('Write Tool (Read-Before-Write Policy)', async (t) => {
   const tmpFile = path.join(process.cwd(), 'test-write-policy.txt');
@@ -16,6 +18,7 @@ test('Write Tool (Read-Before-Write Policy)', async (t) => {
     try { await fs.unlink(tmpFile); } catch (err) {}
     try { await fs.unlink(tmpJsFile); } catch (err) {}
     setPlainText(false);
+    resetFilesReadState();
   });
 
   // Cleanup after tests
@@ -39,7 +42,7 @@ test('Write Tool (Read-Before-Write Policy)', async (t) => {
     // 2. Try to write without reading
     await assert.rejects(
       () => writeTool('test-write-policy.txt', 'new content'),
-      /already exists. You must read it first/
+      /already exists and is not empty. You must read it first/
     );
   });
 
@@ -65,5 +68,33 @@ test('Write Tool (Read-Before-Write Policy)', async (t) => {
     // It should succeed without any syntax error in the result
     assert.ok(result.includes('Successfully wrote'));
     assert.ok(!result.includes('CRITICAL'));
+  });
+
+  await t.test('allows writing to a file created by touch without reading', async () => {
+    await touchTool('test-write-policy.txt');
+    const result = await writeTool('test-write-policy.txt', 'touched content');
+    assert.ok(result.includes('Successfully wrote'), 'Should allow writing to a touched file.');
+  });
+
+  await t.test('allows writing to an empty file without reading', async () => {
+    // Create an empty file directly (not through touchTool)
+    await fs.writeFile(tmpFile, '', 'utf-8');
+    
+    // Should work because size is 0
+    const result = await writeTool('test-write-policy.txt', 'from empty');
+    assert.ok(result.includes('Successfully wrote'), 'Should allow writing to an empty file.');
+  });
+
+  await t.test('allows writing twice to the same file in one session', async () => {
+    // 1. Initial write (to new file)
+    await writeTool('test-write-policy.txt', 'first');
+    
+    // 2. Second write (to existing file)
+    // This should work because the first write calls markAsRead
+    const result = await writeTool('test-write-policy.txt', 'second');
+    assert.ok(result.includes('Successfully wrote'), 'Should allow subsequent writes.');
+    
+    const content = await fs.readFile(tmpFile, 'utf-8');
+    assert.strictEqual(content, 'second');
   });
 });
