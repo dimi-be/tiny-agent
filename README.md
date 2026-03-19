@@ -100,7 +100,8 @@ npm test
 
 1. Add support for passing a json dialog history. Prepend the systemprompt to this and send this off to the agent. (Last message needs to be from user?)
 2. Redundant calls to fs.access in syntaxChecker code
-3. Javascript sources should be converted to typescript
+3. Add npx tool with limited whitelist of packages (tsc)
+4. Javascript sources should be converted to typescript
 
 ## ⚖️ License
 
