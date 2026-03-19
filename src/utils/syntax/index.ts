@@ -5,12 +5,12 @@ import { checkWithEslint } from './eslint.js';
 import { checkWithTsc } from './tsc.js';
 import { checkWithPython } from './python.js';
 
-export async function checkSyntax(filePath) {
+export async function checkSyntax(filePath: string) {
   const ext = path.extname(filePath).toLowerCase();
 
   try {
     await fs.access(filePath);
-  } catch (err) {
+  } catch (err: any) {
     return `Syntax Error:\n${err.message}`;
   }
 
@@ -54,7 +54,7 @@ export async function checkSyntax(filePath) {
 
     return `Syntax check skipped (unsupported file type: ${ext || 'none'})`;
 
-  } catch (error) {
+  } catch (error: any) {
     if (error.code === 127 || error.code === 'ENOENT') {
       return `Syntax check skipped (required checking tool not installed).`;
     }

@@ -4,7 +4,7 @@ import ignore from 'ignore';
 import { securePath } from '../../utils/security.js';
 import { directoryHasAgentsMd } from '../../utils/agentsMd.js';
 
-export default async function treeTool(dirPath = '.') {
+export default async function treeTool(dirPath: string = '.') {
   const resolved = securePath(dirPath);
   
   const ig = ignore();
@@ -15,7 +15,7 @@ export default async function treeTool(dirPath = '.') {
   
   ig.add(['node_modules', '.*']);
 
-  async function buildTree(currentPath, prefix = '') {
+  async function buildTree(currentPath: string, prefix: string = '') {
     const entries = await fs.readdir(currentPath, { withFileTypes: true });
     
     entries.sort((a, b) => {

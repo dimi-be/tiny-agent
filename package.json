@@ -7,8 +7,9 @@
     "tiny-agent": "dist/index.js"
   },
   "scripts": {
-    "test": "node --test",
-    "build": "esbuild src/index.js --bundle --platform=node --format=esm --outfile=dist/index.js"
+    "test": "node --import tsx --test",
+    "build": "esbuild src/index.ts --bundle --platform=node --format=esm --outfile=dist/index.js",
+    "type-check": "tsc --noEmit"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +23,10 @@
     "yargs": "^18.0.0"
   },
   "devDependencies": {
-    "esbuild": "^0.25.0"
+    "@types/node": "^25.5.0",
+    "@types/yargs": "^17.0.35",
+    "esbuild": "^0.25.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
   }
 }

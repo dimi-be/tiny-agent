@@ -3,6 +3,17 @@ import fs from "fs/promises";
 import * as tools from "./tools/index.js";
 import { setYolo, setPlainText } from "./utils/state.js";
 
+export interface AgentOptions {
+  model: string;
+  url: string;
+  systemPrompt: string;
+  prompt: string;
+  yolo: boolean;
+  plan: boolean;
+  plainText: boolean;
+  logPath?: string;
+}
+
 export async function runAgentLoop({
   model,
   url,
@@ -12,11 +23,11 @@ export async function runAgentLoop({
   plan,
   plainText,
   logPath,
-}) {
+}: AgentOptions): Promise<void> {
   setYolo(yolo);
   setPlainText(plainText);
 
-  const writeToLog = async (data) => {
+  const writeToLog = async (data: any) => {
     if (logPath) {
       await fs.appendFile(logPath, JSON.stringify(data, null, 2) + "\n\n", "utf8");
     }
@@ -38,7 +49,7 @@ export async function runAgentLoop({
     : tools.schemas;
 
   let totalTokens = 0;
-  const messages = [
+  const messages: any[] = [
     { role: "system", content: systemPrompt },
     { role: "user", content: prompt },
   ];
@@ -51,7 +62,7 @@ export async function runAgentLoop({
     const response = await openai.chat.completions.create({
       model: model,
       messages: messages,
-      tools: activeTools.length > 0 ? activeTools : undefined,
+      tools: activeTools.length > 0 ? (activeTools as any) : undefined,
       tool_choice: activeTools.length > 0 ? "auto" : "none",
     });
 
@@ -74,6 +85,7 @@ export async function runAgentLoop({
     }
 
     for (const toolCall of message.tool_calls) {
+      if (toolCall.type !== "function") continue;
       const functionName = toolCall.function.name;
       const functionArgs = JSON.parse(toolCall.function.arguments);
 
@@ -101,7 +113,7 @@ export async function runAgentLoop({
         };
         messages.push(toolMessage);
         await writeToLog(toolMessage);
-      } catch (error) {
+      } catch (error: any) {
         console.error(`Tool execution error: ${error.message}`);
         const toolErrorMessage = {
           tool_call_id: toolCall.id,

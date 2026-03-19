@@ -1,4 +1,4 @@
-import { execFile } from 'child_process';
+import { execFile, ExecFileOptions } from 'child_process';
 import { promisify } from 'util';
 
 const promisifiedExecFile = promisify(execFile);
@@ -8,10 +8,10 @@ const promisifiedExecFile = promisify(execFile);
  * This is a security measure to prevent command injection.
  * @param {string} file The name or path of the executable file to run.
  * @param {string[]} args List of string arguments.
- * @param {object} options Execution options.
+ * @param {ExecFileOptions} options Execution options.
  * @returns {Promise<{stdout: string, stderr: string}>}
  */
-export async function execFileAsync(file, args = [], options = {}) {
+export async function execFileAsync(file: string, args: string[] = [], options: ExecFileOptions = {}) {
   const mergedOptions = {
     cwd: process.cwd(),
     shell: false, // Explicitly disable shell for security

@@ -49,7 +49,7 @@ async function main() {
       description: "Path to a log file to store the conversation",
     })
     .demandCommand(1, "You must provide a PROMPT as the last argument")
-    .parse();
+    .parseSync();
 
   const promptArg = argv._[0];
   let promptText = "";
@@ -78,7 +78,7 @@ async function main() {
   if (argv.system) {
     try {
       systemPrompt = await fs.readFile(argv.system, "utf-8");
-    } catch (err) {
+    } catch (err: any) {
       console.error(
         `Error reading system prompt file at ${argv.system}: ${err.message}`,
       );
@@ -105,7 +105,7 @@ async function main() {
       plainText: argv.plainText,
       logPath: argv.log
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error(`\nAgent Error: ${error.message}`);
     process.exit(1);
   }

@@ -8,7 +8,7 @@ import { formatDiagnostic } from './formatter.js';
 
 let isInitialized = false;
 
-function getWasmPath(ext) {
+function getWasmPath(ext: string) {
   let baseWasmDir;
   try {
     const pkgPath = require.resolve('@repomix/tree-sitter-wasms/package.json');
@@ -35,7 +35,7 @@ function getWasmPath(ext) {
   }
 }
 
-function findErrorNode(node) {
+function findErrorNode(node: any): any {
   if (node.type === 'ERROR' || node.isMissing) {
     return node;
   }
@@ -46,13 +46,13 @@ function findErrorNode(node) {
   return null;
 }
 
-export async function checkWithTreeSitter(filePath, ext) {
+export async function checkWithTreeSitter(filePath: string, ext: string) {
   const wasmPath = getWasmPath(ext);
   if (!wasmPath) return null; // Unsupported
 
   try {
     await fs.access(filePath);
-  } catch (err) {
+  } catch (err: any) {
     return `Syntax Error (Tree-sitter): ${err.message}`;
   }
 

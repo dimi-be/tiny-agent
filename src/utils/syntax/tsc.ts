@@ -1,10 +1,10 @@
 import { execFileAsync } from '../exec.js';
 import fs from 'fs/promises';
 
-export async function checkWithTsc(filePath) {
+export async function checkWithTsc(filePath: string) {
   try {
     await fs.access(filePath);
-  } catch (err) {
+  } catch (err: any) {
     return `Syntax Error (TSC): ${err.message}`;
   }
 
@@ -21,7 +21,7 @@ export async function checkWithTsc(filePath) {
       '--pretty', 'false'
     ]);
     return null; // Passed
-  } catch (error) {
+  } catch (error: any) {
     // stdout contains the actual type-check failures
     if (error.stdout) {
       return `**CRITICAL: The code you wrote has errors.**\n**Tool:** [TSC]\n**Message:**\n${error.stdout}`;
