@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 
-export async function formatDiagnostic(tool, filePath, lineNum, colNum, message) {
+export async function formatDiagnostic(tool: string, filePath: string, lineNum: number, colNum: number, message: string) {
   let fileContent = '';
   try {
     fileContent = await fs.readFile(filePath, 'utf8');

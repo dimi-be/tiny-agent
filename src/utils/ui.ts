@@ -1,6 +1,6 @@
 import readline from 'node:readline/promises';
 
-export async function confirmAction(promptText) {
+export async function confirmAction(promptText: string) {
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout

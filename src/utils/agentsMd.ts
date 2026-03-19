@@ -3,13 +3,13 @@ import fs from 'fs/promises';
 
 // A Set to track which nested AGENTS.md files have already been flagged to the model in the current session.
 // This prevents us from spamming the model with the same warning over and over.
-const warnedAgentsFiles = new Set();
+const warnedAgentsFiles = new Set<string>();
 
 /**
  * Scans upwards from a starting directory to find the nearest AGENTS.md file,
  * stopping at the project root (process.cwd()).
  */
-async function findNearestAgentsMd(startDir) {
+async function findNearestAgentsMd(startDir: string) {
   let currentDir = startDir;
   const rootDir = process.cwd();
 
@@ -41,7 +41,7 @@ async function findNearestAgentsMd(startDir) {
 /**
  * Returns a warning string if a new nested AGENTS.md is found.
  */
-export async function getAgentsWarning(targetFilePath) {
+export async function getAgentsWarning(targetFilePath: string) {
   const startDir = path.dirname(targetFilePath);
   const nearestAgentsMd = await findNearestAgentsMd(startDir);
 
@@ -58,7 +58,7 @@ export async function getAgentsWarning(targetFilePath) {
  * Helper for ls/tree to check if a directory directly contains an AGENTS.md.
  * Note: We don't mark it as 'warned' here, just decorate the UI.
  */
-export async function directoryHasAgentsMd(dirPath) {
+export async function directoryHasAgentsMd(dirPath: string) {
   try {
     const agentsPath = path.join(dirPath, 'AGENTS.md');
     // Skip decorating the root directory since it's already in the system prompt.

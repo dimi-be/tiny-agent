@@ -1,12 +1,24 @@
 import * as filesystem from './filesystem/index.js';
 import * as system from './system.js';
 import * as state from '../utils/state.js';
+import {
+  ReadArgs,
+  GrepArgs,
+  LsArgs,
+  TreeArgs,
+  WriteArgs,
+  MkdirArgs,
+  TouchArgs,
+  RmArgs,
+  NpmArgs,
+  ToolHandlerMap
+} from './types.js';
 
-export function setYolo(yolo) {
+export function setYolo(yolo: boolean): void {
   state.setYolo(yolo);
 }
 
-export function setPlainText(plainText) {
+export function setPlainText(plainText: boolean): void {
   state.setPlainText(plainText);
 }
 
@@ -142,14 +154,14 @@ export const schemas = [
   }
 ];
 
-export const handlers = {
-  read: async (args) => await filesystem.readFileTool(args.filePath),
-  grep: async (args) => await filesystem.grepTool(args.pattern, args.filePath),
-  ls: async (args) => await filesystem.lsTool(args.dirPath),
-  tree: async (args) => await filesystem.treeTool(args.dirPath),
-  write: async (args) => await filesystem.writeTool(args.filePath, args.content),
-  mkdir: async (args) => await filesystem.mkdirTool(args.dirPath),
-  touch: async (args) => await filesystem.touchTool(args.filePath),
-  rm: async (args) => await filesystem.rmTool(args.filePath, args.recursive),
-  npm: async (args) => await system.npmTool(args.command)
+export const handlers: ToolHandlerMap = {
+  read: async (args: ReadArgs) => await filesystem.readFileTool(args.filePath),
+  grep: async (args: GrepArgs) => await filesystem.grepTool(args.pattern, args.filePath),
+  ls: async (args: LsArgs) => await filesystem.lsTool(args.dirPath),
+  tree: async (args: TreeArgs) => await filesystem.treeTool(args.dirPath),
+  write: async (args: WriteArgs) => await filesystem.writeTool(args.filePath, args.content),
+  mkdir: async (args: MkdirArgs) => await filesystem.mkdirTool(args.dirPath),
+  touch: async (args: TouchArgs) => await filesystem.touchTool(args.filePath),
+  rm: async (args: RmArgs) => await filesystem.rmTool(args.filePath, args.recursive || false),
+  npm: async (args: NpmArgs) => await system.npmTool(args.command)
 };

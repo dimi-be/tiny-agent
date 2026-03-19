@@ -1,8 +1,8 @@
 let isYolo = false;
 let isPlainText = false;
 
-export function setYolo(yolo) { isYolo = yolo; }
+export function setYolo(yolo: boolean) { isYolo = yolo; }
 export function getIsYolo() { return isYolo; }
 
-export function setPlainText(plainText) { isPlainText = plainText; }
+export function setPlainText(plainText: boolean) { isPlainText = plainText; }
 export function getIsPlainText() { return isPlainText; }

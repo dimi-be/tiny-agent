@@ -5,7 +5,7 @@ import { confirmAction } from "../../utils/ui.js";
 import { getIsYolo, getIsPlainText } from "../../utils/state.js";
 import { checkSyntax } from "../../utils/syntax/index.js";
 
-export default async function writeTool(filePath, content) {
+export default async function writeTool(filePath: string, content: string) {
   const resolved = securePath(filePath);
   try {
     const stats = await fs.stat(resolved);
@@ -14,7 +14,7 @@ export default async function writeTool(filePath, content) {
         `The file '${filePath}' already exists and is not empty. You must read it first using the 'read' tool before overwriting it.`,
       );
     }
-  } catch (err) {
+  } catch (err: any) {
     if (err.code !== "ENOENT") throw err;
   }
 
