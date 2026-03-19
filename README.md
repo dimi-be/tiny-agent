@@ -6,6 +6,8 @@ A lightweight, CLI Worker agent designed to perform local file implementation ta
 
 Tiny Agent is designed to be "light" on the AI side by providing a small toolset and minimal system prompt. It was born out of the need to have an agent that worked well with LLMs that have a small context window. It does not support interactive mode. Its main purpose is to be a tool that is easily integrated in pipelines to let a local AI perform limited tasks.
 
+The project is currently under heavy development, but it works. The currently the focus is on supporting JavaScript and TypeScript.
+
 ## ✨ Features
 
 - **Local LLM Integration**: Communicates via OpenAI-compatible APIs (defaults to `http://localhost:1234/v1`).
@@ -94,22 +96,12 @@ The project includes unit tests for security, syntax checking, and `AGENTS.md` l
 npm test
 ```
 
-## Issues
+## ⚠️ Issues
 
-- Behavior when creating new files is wasting too many calls
-  Touching an **empty** file should add it to sessionState
-  Example:
-  - Let me create a new file for our prime sieve implementation:
-  - > Executing tool: touch with args: {"filePath":"prime-sieve.js"} Context: 1030 tokens
-  - Now I'll implement the Sieve of Eratosthenes algorithm in the file. This is an efficient way to find all primes up to a given number.
-  - > Executing tool: write with args: {"filePath":"prime-sieve.js","content":"[Content truncated]"} Context: 1528 tokens
-  - Tool execution error: The file 'prime-sieve.js' already exists. You must read it first using the 'read' tool before overwriting it.
-  - I need to read the existing file first before I can overwrite it:
-  - > Executing tool: read with args: {"filePath":"prime-sieve.js"} Context: 1608 tokens
-  - It seems the file exists but is empty. Let me overwrite it with our implementation:
-  - > Executing tool: write with args: {"filePath":"prime-sieve.js","content":"[Content truncated]"} Context: 2083 tokens
-- When a write triggers a create this should also add the file to sessionState
-- Session state should be called filesReadState
+1. Add support for passing a json dialog history. Prepend the systemprompt to this and send this off to the agent. (Last message needs to be from user?)
+2. Redundant calls to fs.access in syntaxChecker code
+3. Add npx tool with limited whitelist of packages (tsc)
+4. Javascript sources should be converted to typescript
 
 ## ⚖️ License
 

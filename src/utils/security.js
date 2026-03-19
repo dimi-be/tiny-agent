@@ -10,12 +10,21 @@ export function securePath(targetPath) {
   return resolved;
 }
 
-const sessionState = new Set();
+const filesReadState = new Set();
 
 export function markAsRead(targetPath) {
-  sessionState.add(securePath(targetPath));
+  filesReadState.add(securePath(targetPath));
 }
 
 export function hasBeenRead(targetPath) {
-  return sessionState.has(securePath(targetPath));
+  return filesReadState.has(securePath(targetPath));
+}
+
+export function resetFilesReadState() {
+  filesReadState.clear();
+}
+
+export function checkNpmCommand(command) {
+  // All npm commands are now allowed
+  return true;
 }
