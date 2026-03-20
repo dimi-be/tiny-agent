@@ -23,11 +23,11 @@ The project is currently under heavy development, but it works. The currently th
   - **CWD Sandboxing**: Prevents the agent from accessing files outside the current working directory.
   - **Read-Before-Write Policy**: Ensures the agent has inspected a file's content before being allowed to overwrite it.
 - **Rich Toolset**:
-  - `ls` / `tree`: Explore directory structures (respects `.gitignore`).
-  - `read`: Efficient file reading.
-  - `grep`: Fast pattern searching with line numbers.
-  - `write` / `mkdir` / `touch` / `rm`: Filesystem manipulation.
-  - `npm`: Execute any npm command directly.
+  - `list_directory` / `list_all_files`: Explore directory structures (respects `.gitignore`).
+  - `read_file`: Efficient file reading.
+  - `search_file`: Fast pattern searching with line numbers.
+  - `write_file` / `create_directory` / `create_file` / `delete_file` / `delete_directory`: Filesystem manipulation.
+  - `shell`: Runs a whitelisted shell command (npm or npx).
 - **Token Tracking**: Prints the current context size after every tool call and gives a summary of context and total tokens at the end.
 
 ## 📦 Installation
