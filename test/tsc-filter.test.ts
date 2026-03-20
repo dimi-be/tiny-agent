@@ -4,7 +4,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { checkSyntax } from '../src/utils/syntax/index.js';
 
-test('TSC Output Filtering', async (t) => {
+test('TSC Output Filtering and Formatting', async (t) => {
   const tmpDir = path.join(process.cwd(), 'test-tmp-tsc-filter');
 
   t.before(async () => {
@@ -19,8 +19,8 @@ test('TSC Output Filtering', async (t) => {
     const otherFile = path.join(tmpDir, 'other.ts');
     const mainFile = path.join(tmpDir, 'main.ts');
 
-    // Create a dependency with a type error
-    await fs.writeFile(otherFile, 'export const a: string = 1;');
+    // Valid syntax, but has a type error
+    await fs.writeFile(otherFile, 'export const a: number = ("string" as any);');
     
     // Create a main file that imports it but has no error itself
     await fs.writeFile(mainFile, "import { a } from './other.js';\nconsole.log(a);");
@@ -35,18 +35,34 @@ test('TSC Output Filtering', async (t) => {
     const otherFile = path.join(tmpDir, 'other_with_error.ts');
     const mainFileWithError = path.join(tmpDir, 'main_with_error.ts');
 
-    // Create a dependency with a type error
-    await fs.writeFile(otherFile, 'export const a: string = 1;');
+    // Valid syntax, type error
+    await fs.writeFile(otherFile, 'export const a: number = ("error" as any);');
     
-    // Create a main file that has its OWN type error
-    await fs.writeFile(mainFileWithError, "import { a } from './other_with_error.js';\nexport const b: string = 2;");
+    // Valid syntax, type error in THIS file
+    await fs.writeFile(mainFileWithError, "import { a } from './other_with_error.js';\nconst b: number = 1;\nconst c: string = 1;");
 
     const result = await checkSyntax(mainFileWithError);
     
-    // It should fail, but the message should only contain main_with_error.ts
+    // It should fail
     assert.match(result, /\*\*CRITICAL: The code you wrote has errors\.\*\*/);
     assert.match(result, /\[TSC\]/);
-    assert.ok(result.includes('main_with_error.ts'), 'Should contain error from main file');
+    // Should contain context from the main file
+    assert.ok(result.includes('const c: string = 1;'), 'Should contain error context from main file');
+    // Should NOT contain the path to the other file (since it's filtered)
     assert.ok(!result.includes('other_with_error.ts'), 'Should NOT contain error from dependency');
+  });
+
+  await t.test('formats TSC diagnostic with code context', async () => {
+    const errorFile = path.join(tmpDir, 'formatted_error.ts');
+    // Use valid JS syntax that is a TS type error
+    await fs.writeFile(errorFile, 'let x: number = 1;\nx = ("string" as any);\nconst y: string = 1;');
+    
+    const result = await checkSyntax(errorFile);
+    
+    // Verify that formatDiagnostic was called and result contains code context
+    assert.match(result, /\*\*Location:\*\* Line 3, Col/);
+    assert.match(result, /\*\*Context:\*\*/);
+    assert.match(result, /3 > const y: string = 1;/);
+    assert.match(result, /\[TSC\]/);
   });
 });

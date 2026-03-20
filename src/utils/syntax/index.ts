@@ -39,9 +39,11 @@ export async function checkSyntax(filePath: string) {
       const tsError = await checkWithTreeSitter(filePath, ext);
       if (tsError) return tsError;
 
-      // Stage 2: ESLint (Style & Local Logic)
-      const lintError = await checkWithEslint(filePath);
-      if (lintError) return lintError;
+      // Stage 2: ESLint (Style & Local Logic - JS Only for node -c)
+      if (isJS) {
+        const lintError = await checkWithEslint(filePath);
+        if (lintError) return lintError;
+      }
 
       // Stage 3: TSC (Type & Deep Logic - TypeScript Only)
       if (isTS) {
