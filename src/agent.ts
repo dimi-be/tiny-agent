@@ -71,7 +71,7 @@ export async function runAgentLoop({
     const response = await openai.chat.completions.create({
       model: model,
       messages: messages,
-      tools: activeTools.length > 0 ? (activeTools as any) : undefined,
+      tools: activeTools.length > 0 ? activeTools : undefined,
       tool_choice: activeTools.length > 0 ? "auto" : "none",
     });
 

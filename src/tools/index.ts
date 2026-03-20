@@ -23,6 +23,7 @@ import {
   ShellArgs,
   ToolHandlerMap,
 } from "./types.js";
+import OpenAI from "openai";
 
 export function setYolo(yolo: boolean): void {
   state.setYolo(yolo);
@@ -32,7 +33,7 @@ export function setPlainText(plainText: boolean): void {
   state.setPlainText(plainText);
 }
 
-export const schemas = [
+export const schemas: OpenAI.Chat.Completions.ChatCompletionFunctionTool[] = [
   {
     type: "function",
     function: {
