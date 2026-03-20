@@ -1,9 +1,9 @@
-import path from 'path';
-import fs from 'fs/promises';
-import { checkWithTreeSitter } from './tree-sitter.js';
-import { checkWithEslint } from './eslint.js';
-import { checkWithTsc } from './tsc.js';
-import { checkWithPython } from './python.js';
+import path from "path";
+import fs from "fs/promises";
+import { checkWithTreeSitter } from "./tree-sitter.js";
+import { checkWithNode } from "./node.js";
+import { checkWithTsc } from "./tsc.js";
+import { checkWithPython } from "./python.js";
 
 export async function checkSyntax(filePath: string) {
   const ext = path.extname(filePath).toLowerCase();
@@ -15,24 +15,24 @@ export async function checkSyntax(filePath: string) {
   }
 
   try {
-    if (ext === '.json') {
-      const content = await fs.readFile(filePath, 'utf8');
+    if (ext === ".json") {
+      const content = await fs.readFile(filePath, "utf8");
       JSON.parse(content);
-      return 'Syntax check passed.';
+      return "Syntax check passed.";
     }
 
-    if (ext === '.py') {
+    if (ext === ".py") {
       // Stage 1: Tree-sitter
       const tsError = await checkWithTreeSitter(filePath, ext);
       if (tsError) return tsError;
 
       const error = await checkWithPython(filePath);
       if (error) return error;
-      return 'Syntax check passed.';
+      return "Syntax check passed.";
     }
 
-    const isJS = ['.js', '.cjs', '.mjs', '.jsx'].includes(ext);
-    const isTS = ['.ts', '.tsx'].includes(ext);
+    const isJS = [".js", ".cjs", ".mjs", ".jsx"].includes(ext);
+    const isTS = [".ts", ".tsx"].includes(ext);
 
     if (isJS || isTS) {
       // Stage 1: Tree-sitter (Universal Syntax Check)
@@ -41,7 +41,7 @@ export async function checkSyntax(filePath: string) {
 
       // Stage 2: ESLint (Style & Local Logic - JS Only for node -c)
       if (isJS) {
-        const lintError = await checkWithEslint(filePath);
+        const lintError = await checkWithNode(filePath);
         if (lintError) return lintError;
       }
 
@@ -51,13 +51,12 @@ export async function checkSyntax(filePath: string) {
         if (tscError) return tscError;
       }
 
-      return 'Syntax check passed.';
+      return "Syntax check passed.";
     }
 
-    return `Syntax check skipped (unsupported file type: ${ext || 'none'})`;
-
+    return `Syntax check skipped (unsupported file type: ${ext || "none"})`;
   } catch (error: any) {
-    if (error.code === 127 || error.code === 'ENOENT') {
+    if (error.code === 127 || error.code === "ENOENT") {
       return `Syntax check skipped (required checking tool not installed).`;
     }
     return `Syntax Error:\n${error.stderr || error.message}`;

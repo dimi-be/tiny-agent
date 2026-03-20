@@ -13,6 +13,7 @@ The project is currently under heavy development, but it works. The currently th
 - **Local LLM Integration**: Communicates via OpenAI-compatible APIs (defaults to `http://localhost:1234/v1`).
 - **Plan Mode (`-p`)**: A read-only mode for the agent to research the codebase and design solutions without making any changes.
 - **YOLO Mode (`-y`)**: Bypasses manual confirmation prompts for destructive operations (write, delete, mkdir, npm).
+- **Dialog History (`-i`)**: Pass a JSON file containing previous conversation history to resume tasks or provide extensive context. Automatically splices in the latest system prompt.
 - **Automatic Syntax Checking**: Immediately validates files after every `write`.
   - Supports: JavaScript (`node -c`), JSON (`JSON.parse`), Python (`py_compile`), and TypeScript/React (`npx tsc --noEmit`).
 - **`AGENTS.md` Intelligence**:
@@ -73,6 +74,7 @@ tiny-agent -m <model_name> [options] "PROMPT"
 | `--yolo`       | `-y`  | **YOLO Mode**: Bypasses manual confirmations for writes and deletes.                  | `false`                    |
 | `--plain-text` | `-t`  | **Plain Text Mode**: Disables automatic syntax checking after writes.                 | `false`                    |
 | `--log`        | `-l`  | Path to a log file to store the conversation.                                         |                            |
+| `--history`    | `-i`  | Path to a JSON file containing dialog history to resume from.                         |                            |
 
 ### Examples
 
@@ -88,6 +90,22 @@ tiny-agent -m llama3 -p "How does the authentication logic work in this project?
 tiny-agent -m llama3 -y "Add a new /health endpoint to the Express server in src/app.js"
 ```
 
+**Resuming from JSON History:**
+
+If you have a file `conversation.json` structured like this:
+```json
+[
+  {"role": "user", "content": "How does the syntax checker work?"},
+  {"role": "assistant", "content": "It uses tree-sitter to validate... "}
+]
+```
+
+You can pass it in to give the agent context, and append a new prompt:
+```bash
+tiny-agent -m llama3 -i ./conversation.json "Great, add a new test for it."
+```
+*(Note: Tiny Agent will automatically inject the system prompt at the top of the history if it isn't already there. The final resulting array must end with a user message.)*
+
 ## 🧪 Testing
 
 The project includes unit tests for security, syntax checking, and `AGENTS.md` logic.
@@ -98,8 +116,7 @@ npm test
 
 ## ⚠️ Issues
 
-1. Add support for passing a json dialog history. Prepend the systemprompt to this and send this off to the agent. (Last message needs to be from user?)
-2. Redundant calls to fs.access in syntaxChecker code
+1. Redundant calls to fs.access in syntaxChecker code
 
 ## ⚖️ License
 
