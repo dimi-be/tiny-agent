@@ -98,10 +98,32 @@ npm test
 
 ## ⚠️ Issues
 
+0. Tool rework
+   - Renaming tools:
+     - read => read_file
+     - write => write_file
+     - grep => search_file
+     - ls => list_directory
+     - mkdir => create_directory
+     - touch => create_file
+     - tree => list_all_files
+   - Replace npm tool with shell tool
+     - shell(command)
+     - whitelist (npm, npx)
+   - Split rm in delete_file and delete_directory
 1. Add support for passing a json dialog history. Prepend the systemprompt to this and send this off to the agent. (Last message needs to be from user?)
 2. Redundant calls to fs.access in syntaxChecker code
-3. Add npx tool with limited whitelist of packages (tsc)
-4. tsc output is not limited to just the edited file
+3. tsc output is not limited to just the edited file. Only return the lines for the current file
+   Example:
+
+```
+src/utils/syntax/python.ts(2,8): error TS1192: Module '"fs/promises"' has no default export.
+src/utils/syntax/tree-sitter.ts(2,31): error TS1343: The 'import.meta' meta-property is only allowed when the '--module' option is 'es2020', 'es2022', 'esnext', 'system', 'node16', 'node18', 'node20', or 'nodenext'.
+src/utils/syntax/tree-sitter.ts(5,8): error TS1259: Module '"path"' can only be default-imported using the 'esModuleInterop' flag
+src/utils/syntax/tree-sitter.ts(6,8): error TS1192: Module '"fs/promises"' has no default export.
+src/utils/syntax/tsc.ts(2,8): error TS1192: Module '"fs/promises"' has no default export.
+src/utils/ui.ts(1,8): error TS1192: Module '"node:readline/promises"' has no default export.
+```
 
 ## ⚖️ License
 
