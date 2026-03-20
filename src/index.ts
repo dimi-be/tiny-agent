@@ -5,6 +5,7 @@ import { hideBin } from "yargs/helpers";
 import fs from "fs/promises";
 import path from "path";
 import { runAgentLoop } from "./agent.js";
+import { ChatCompletionMessageParam } from "openai/resources/chat/completions.js";
 
 async function main() {
   const argv = yargs(hideBin(process.argv))
@@ -48,7 +49,17 @@ async function main() {
       type: "string",
       description: "Path to a log file to store the conversation",
     })
-    .demandCommand(1, "You must provide a PROMPT as the last argument")
+    .option("history", {
+      alias: "i",
+      type: "string",
+      description: "Path to a JSON file containing the dialog history",
+    })
+    .check((argv) => {
+      if (!argv._[0] && !argv.history) {
+        throw new Error("You must provide either a PROMPT argument or a --history file.");
+      }
+      return true;
+    })
     .parseSync();
 
   const promptArg = argv._[0];
@@ -62,13 +73,22 @@ async function main() {
       data += chunk;
     }
     promptText = data.trim();
-  } else {
+  } else if (promptArg) {
     promptText = String(promptArg);
   }
 
-  if (!promptText) {
-    console.error("Error: PROMPT cannot be empty.");
-    process.exit(1);
+  let history: ChatCompletionMessageParam[] | undefined;
+  if (argv.history) {
+    try {
+      const historyContent = await fs.readFile(argv.history, "utf-8");
+      history = JSON.parse(historyContent);
+      if (!Array.isArray(history)) {
+        throw new Error("History must be a JSON array of messages.");
+      }
+    } catch (err: any) {
+      console.error(`Error reading or parsing history file at ${argv.history}: ${err.message}`);
+      process.exit(1);
+    }
   }
 
   let systemPrompt = argv.plan
@@ -99,11 +119,12 @@ async function main() {
       model: argv.model,
       url: argv.url,
       systemPrompt,
-      prompt: promptText,
+      prompt: promptText || undefined,
       yolo: argv.yolo,
       plan: argv.plan,
       plainText: argv.plainText,
-      logPath: argv.log
+      logPath: argv.log,
+      history,
     });
   } catch (error: any) {
     console.error(`\nAgent Error: ${error.message}`);

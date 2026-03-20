@@ -9,7 +9,7 @@ import { searchFileTool } from "./search-file-tool.js";
 import { shellTool } from "./shell-tool.js";
 import { writeFileTool } from "./write-file-tool.js";
 import * as state from "../utils/state.js";
-
+import { ChatCompletionFunctionTool } from "openai/resources";
 import {
   ReadFileArgs,
   SearchFileArgs,
@@ -23,7 +23,6 @@ import {
   ShellArgs,
   ToolHandlerMap,
 } from "./types.js";
-import OpenAI from "openai";
 
 export function setYolo(yolo: boolean): void {
   state.setYolo(yolo);
@@ -33,7 +32,7 @@ export function setPlainText(plainText: boolean): void {
   state.setPlainText(plainText);
 }
 
-export const schemas: OpenAI.Chat.Completions.ChatCompletionFunctionTool[] = [
+export const schemas: ChatCompletionFunctionTool[] = [
   {
     type: "function",
     function: {

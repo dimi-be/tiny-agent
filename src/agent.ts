@@ -2,16 +2,18 @@ import OpenAI from "openai";
 import fs from "fs/promises";
 import * as tools from "./tools/index.js";
 import { setYolo, setPlainText } from "./utils/state.js";
+import { ChatCompletionMessageParam } from "openai/resources/chat/completions.js";
 
 export interface AgentOptions {
   model: string;
   url: string;
   systemPrompt: string;
-  prompt: string;
+  prompt?: string;
   yolo: boolean;
   plan: boolean;
   plainText: boolean;
   logPath?: string;
+  history?: ChatCompletionMessageParam[];
 }
 
 export async function runAgentLoop({
@@ -23,6 +25,7 @@ export async function runAgentLoop({
   plan,
   plainText,
   logPath,
+  history,
 }: AgentOptions): Promise<void> {
   setYolo(yolo);
   setPlainText(plainText);
@@ -58,10 +61,18 @@ export async function runAgentLoop({
     : tools.schemas;
 
   let totalTokens = 0;
-  const messages: any[] = [
-    { role: "system", content: systemPrompt },
-    { role: "user", content: prompt },
-  ];
+
+  const messages: ChatCompletionMessageParam[] = history ? [...history] : [];
+
+  if (messages.length === 0 || messages[0].role !== "system") {
+    messages.unshift({ role: "system", content: systemPrompt });
+  } else {
+    messages[0] = { role: "system", content: systemPrompt };
+  }
+
+  if (prompt) {
+    messages.push({ role: "user", content: prompt });
+  }
 
   for (const msg of messages) {
     await writeToLog(msg);
@@ -114,7 +125,7 @@ export async function runAgentLoop({
 
         const result = await handler(functionArgs);
 
-        const toolMessage = {
+        const toolMessage: ChatCompletionMessageParam = {
           tool_call_id: toolCall.id,
           role: "tool",
           name: functionName,
@@ -124,7 +135,7 @@ export async function runAgentLoop({
         await writeToLog(toolMessage);
       } catch (error: any) {
         console.error(`Tool execution error: ${error.message}`);
-        const toolErrorMessage = {
+        const toolErrorMessage: ChatCompletionMessageParam = {
           tool_call_id: toolCall.id,
           role: "tool",
           name: functionName,

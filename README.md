@@ -98,8 +98,7 @@ npm test
 
 ## ⚠️ Issues
 
-1. Add support for passing a json dialog history. If the history contains no system prompt splice ours in at the top.
-2. Redundant calls to fs.access in syntaxChecker code
+1. Redundant calls to fs.access in syntaxChecker code
 
 ## ⚖️ License
 
