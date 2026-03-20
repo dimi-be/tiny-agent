@@ -2,9 +2,9 @@ import test from "node:test";
 import assert from "node:assert";
 import fs from "fs/promises";
 import path from "path";
-import writeTool from "../src/tools/write-file.js";
-import readFileTool from "../src/tools/read-file.js";
-import touchTool from "../src/tools/create-file.js";
+import { writeFileTool } from "../src/tools/write-file-tool.js";
+import { readFileTool } from "../src/tools/read-file-tool.js";
+import { createFileTool } from "../src/tools/create-file-tool.js";
 import { setYolo, setPlainText } from "../src/utils/state.js";
 import { resetFilesReadState } from "../src/utils/security.js";
 
@@ -38,7 +38,10 @@ test("Write Tool (Read-Before-Write Policy)", async (t) => {
   await t.test(
     "allows writing to a non-existent file without reading",
     async () => {
-      const result = await writeTool("test-write-policy.txt", "new content");
+      const result = await writeFileTool(
+        "test-write-policy.txt",
+        "new content",
+      );
       assert.ok(
         result.includes("Successfully wrote"),
         "Should allow writing to a new file.",
@@ -57,7 +60,7 @@ test("Write Tool (Read-Before-Write Policy)", async (t) => {
 
       // 2. Try to write without reading
       await assert.rejects(
-        () => writeTool("test-write-policy.txt", "new content"),
+        () => writeFileTool("test-write-policy.txt", "new content"),
         /already exists and is not empty. You must read it first/,
       );
     },
@@ -73,7 +76,7 @@ test("Write Tool (Read-Before-Write Policy)", async (t) => {
       await readFileTool("test-write-policy.txt");
 
       // 3. Try to write now
-      const result = await writeTool(
+      const result = await writeFileTool(
         "test-write-policy.txt",
         "updated content",
       );
@@ -90,7 +93,7 @@ test("Write Tool (Read-Before-Write Policy)", async (t) => {
   await t.test("plain text mode skips syntax checking", async () => {
     setPlainText(true);
     // Write invalid JS file
-    const result = await writeTool(
+    const result = await writeFileTool(
       "test-write-syntax.js",
       "const a = 1; function() {",
     );
@@ -102,8 +105,8 @@ test("Write Tool (Read-Before-Write Policy)", async (t) => {
   await t.test(
     "allows writing to a file created by touch without reading",
     async () => {
-      await touchTool("test-write-policy.txt");
-      const result = await writeTool(
+      await createFileTool("test-write-policy.txt");
+      const result = await writeFileTool(
         "test-write-policy.txt",
         "touched content",
       );
@@ -119,7 +122,7 @@ test("Write Tool (Read-Before-Write Policy)", async (t) => {
     await fs.writeFile(tmpFile, "", "utf-8");
 
     // Should work because size is 0
-    const result = await writeTool("test-write-policy.txt", "from empty");
+    const result = await writeFileTool("test-write-policy.txt", "from empty");
     assert.ok(
       result.includes("Successfully wrote"),
       "Should allow writing to an empty file.",
@@ -130,11 +133,11 @@ test("Write Tool (Read-Before-Write Policy)", async (t) => {
     "allows writing twice to the same file in one session",
     async () => {
       // 1. Initial write (to new file)
-      await writeTool("test-write-policy.txt", "first");
+      await writeFileTool("test-write-policy.txt", "first");
 
       // 2. Second write (to existing file)
       // This should work because the first write calls markAsRead
-      const result = await writeTool("test-write-policy.txt", "second");
+      const result = await writeFileTool("test-write-policy.txt", "second");
       assert.ok(
         result.includes("Successfully wrote"),
         "Should allow subsequent writes.",

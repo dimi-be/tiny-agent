@@ -4,7 +4,7 @@ import { getIsYolo } from "../utils/state.js";
 
 const exeWhiteList = ["npm", "npx"];
 
-export default async function shellTool(command: string) {
+export async function shellTool(command: string) {
   const parsedArgs =
     command
       .match(/(?:[^\s"]+|"[^"]*")+/g)

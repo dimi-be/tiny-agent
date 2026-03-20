@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert";
 import fs from "fs/promises";
 import path from "path";
-import shellTool from "../src/tools/shell.js";
+import { shellTool } from "../src/tools/shell-tool.js";
 import { setYolo } from "../src/utils/state.js";
 
 test("System Tool (shell) Security Tests", async (t) => {

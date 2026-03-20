@@ -1,13 +1,13 @@
-import createDirectoryTool from "./create-directory.js";
-import createFileTool from "./create-file.js";
-import deleteDirectoryTool from "./delete-directory.js";
-import deleteFileTool from "./delete-file.js";
-import listAllFilesTool from "./list-all-files.js";
-import listDirectoryTool from "./list-directory.js";
-import readFileTool from "./read-file.js";
-import searchFileTool from "./search-file.js";
-import shellTool from "./shell.js";
-import writeFileTool from "./write-file.js";
+import { createDirectoryTool } from "./create-directory-tool.js";
+import { createFileTool } from "./create-file-tool.js";
+import { deleteDirectoryTool } from "./delete-directory-tool.js";
+import { deleteFileTool } from "./delete-file-tool.js";
+import { listAllFilesTool } from "./list-all-files-tool.js";
+import { listDirectoryTool } from "./list-directory-tool.js";
+import { readFileTool } from "./read-file-tool.js";
+import { searchFileTool } from "./search-file-tool.js";
+import { shellTool } from "./shell-tool.js";
+import { writeFileTool } from "./write-file-tool.js";
 import * as state from "../utils/state.js";
 
 import {
@@ -67,8 +67,7 @@ export const schemas = [
     type: "function",
     function: {
       name: "list_directory",
-      description:
-        "Lists files and directories in a specific directory (one at a time).",
+      description: "Lists files and directories in a specific directory.",
       parameters: {
         type: "object",
         properties: {

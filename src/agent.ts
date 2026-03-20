@@ -29,7 +29,11 @@ export async function runAgentLoop({
 
   const writeToLog = async (data: any) => {
     if (logPath) {
-      await fs.appendFile(logPath, JSON.stringify(data, null, 2) + "\n\n", "utf8");
+      await fs.appendFile(
+        logPath,
+        JSON.stringify(data, null, 2) + "\n\n",
+        "utf8",
+      );
     }
   };
 
@@ -44,7 +48,12 @@ export async function runAgentLoop({
 
   const activeTools = plan
     ? tools.schemas.filter((schema) =>
-        ["read", "grep", "ls", "tree"].includes(schema.function.name),
+        [
+          "read_file",
+          "search_file",
+          "list_directory",
+          "list_all_files",
+        ].includes(schema.function.name),
       )
     : tools.schemas;
 

@@ -3,7 +3,7 @@ import { securePath } from "../utils/security.js";
 import { confirmAction } from "../utils/ui.js";
 import { getIsYolo } from "../utils/state.js";
 
-export default async function createDirectoryTool(dirPath: string) {
+export async function createDirectoryTool(dirPath: string) {
   const resolved = securePath(dirPath);
   if (!getIsYolo()) {
     const ok = await confirmAction(`Allow creating directory ${dirPath}?`);

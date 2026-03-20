@@ -3,7 +3,7 @@ import path from "path";
 import { securePath } from "../utils/security.js";
 import { directoryHasAgentsMd } from "../utils/agentsMd.js";
 
-export default async function listDirectoryTool(dirPath = ".") {
+export async function listDirectoryTool(dirPath = ".") {
   const resolved = securePath(dirPath);
   const entries = await fs.readdir(resolved, { withFileTypes: true });
 

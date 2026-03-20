@@ -3,7 +3,7 @@ import { securePath } from "../utils/security.js";
 import { confirmAction } from "../utils/ui.js";
 import { getIsYolo } from "../utils/state.js";
 
-export default async function deleteFileTool(targetPath: string) {
+export async function deleteFileTool(targetPath: string) {
   const resolved = securePath(targetPath);
   if (!getIsYolo()) {
     const ok = await confirmAction(`Allow deleting file ${targetPath}?`);

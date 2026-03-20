@@ -4,7 +4,7 @@ import ignore from "ignore";
 import { securePath } from "../utils/security.js";
 import { directoryHasAgentsMd } from "../utils/agentsMd.js";
 
-export default async function listAllFilesTool(dirPath: string = ".") {
+export async function listAllFilesTool(dirPath: string = ".") {
   const resolved = securePath(dirPath);
 
   const ig = ignore();

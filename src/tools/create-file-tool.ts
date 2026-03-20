@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import { securePath, markAsRead } from "../utils/security.js";
 
-export default async function createFileTool(filePath: string) {
+export async function createFileTool(filePath: string) {
   const resolved = securePath(filePath);
   try {
     const time = new Date();
