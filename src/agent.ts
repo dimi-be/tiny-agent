@@ -29,7 +29,11 @@ export async function runAgentLoop({
 
   const writeToLog = async (data: any) => {
     if (logPath) {
-      await fs.appendFile(logPath, JSON.stringify(data, null, 2) + "\n\n", "utf8");
+      await fs.appendFile(
+        logPath,
+        JSON.stringify(data, null, 2) + "\n\n",
+        "utf8",
+      );
     }
   };
 
@@ -44,7 +48,12 @@ export async function runAgentLoop({
 
   const activeTools = plan
     ? tools.schemas.filter((schema) =>
-        ["read", "grep", "ls", "tree"].includes(schema.function.name),
+        [
+          "read_file",
+          "search_file",
+          "list_directory",
+          "list_all_files",
+        ].includes(schema.function.name),
       )
     : tools.schemas;
 
@@ -62,7 +71,7 @@ export async function runAgentLoop({
     const response = await openai.chat.completions.create({
       model: model,
       messages: messages,
-      tools: activeTools.length > 0 ? (activeTools as any) : undefined,
+      tools: activeTools.length > 0 ? activeTools : undefined,
       tool_choice: activeTools.length > 0 ? "auto" : "none",
     });
 

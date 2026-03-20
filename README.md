@@ -23,11 +23,11 @@ The project is currently under heavy development, but it works. The currently th
   - **CWD Sandboxing**: Prevents the agent from accessing files outside the current working directory.
   - **Read-Before-Write Policy**: Ensures the agent has inspected a file's content before being allowed to overwrite it.
 - **Rich Toolset**:
-  - `ls` / `tree`: Explore directory structures (respects `.gitignore`).
-  - `read`: Efficient file reading.
-  - `grep`: Fast pattern searching with line numbers.
-  - `write` / `mkdir` / `touch` / `rm`: Filesystem manipulation.
-  - `npm`: Execute any npm command directly.
+  - `list_directory` / `list_all_files`: Explore directory structures (respects `.gitignore`).
+  - `read_file`: Efficient file reading.
+  - `search_file`: Fast pattern searching with line numbers.
+  - `write_file` / `create_directory` / `create_file` / `delete_file` / `delete_directory`: Filesystem manipulation.
+  - `shell`: Runs a whitelisted shell command (npm or npx).
 - **Token Tracking**: Prints the current context size after every tool call and gives a summary of context and total tokens at the end.
 
 ## 📦 Installation
@@ -100,8 +100,6 @@ npm test
 
 1. Add support for passing a json dialog history. Prepend the systemprompt to this and send this off to the agent. (Last message needs to be from user?)
 2. Redundant calls to fs.access in syntaxChecker code
-3. Add npx tool with limited whitelist of packages (tsc)
-4. tsc output is not limited to just the edited file
 
 ## ⚖️ License
 

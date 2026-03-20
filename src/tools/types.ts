@@ -1,39 +1,42 @@
-export interface ReadArgs {
+export interface ReadFileArgs {
   filePath: string;
 }
 
-export interface GrepArgs {
+export interface SearchFileArgs {
   pattern: string;
   filePath: string;
 }
 
-export interface LsArgs {
+export interface ListDirectoryArgs {
   dirPath?: string;
 }
 
-export interface TreeArgs {
+export interface ListAllFilesArgs {
   dirPath?: string;
 }
 
-export interface WriteArgs {
+export interface WriteFileArgs {
   filePath: string;
   content: string;
 }
 
-export interface MkdirArgs {
+export interface CreateDirectoryArgs {
   dirPath: string;
 }
 
-export interface TouchArgs {
+export interface CreateFileArgs {
   filePath: string;
 }
 
-export interface RmArgs {
+export interface DeleteFileArgs {
   filePath: string;
-  recursive?: boolean;
 }
 
-export interface NpmArgs {
+export interface DeleteDirectoryArgs {
+  dirPath: string;
+}
+
+export interface ShellArgs {
   command: string;
 }
 
