@@ -1,5 +1,5 @@
-import { execFile, ExecFileOptions } from 'child_process';
-import { promisify } from 'util';
+import { execFile, ExecFileOptions } from "child_process";
+import { promisify } from "util";
 
 const promisifiedExecFile = promisify(execFile);
 
@@ -11,12 +11,11 @@ const promisifiedExecFile = promisify(execFile);
  * @param {ExecFileOptions} options Execution options.
  * @returns {Promise<{stdout: string, stderr: string}>}
  */
-export async function execFileAsync(file: string, args: string[] = [], options: ExecFileOptions = {}) {
-  const mergedOptions = {
+export async function execFileAsync(file: string, args: string[] = []) {
+  const options: ExecFileOptions = {
     cwd: process.cwd(),
     shell: false, // Explicitly disable shell for security
-    ...options
   };
-  
-  return await promisifiedExecFile(file, args, mergedOptions);
+
+  return await promisifiedExecFile(file, args, options);
 }
