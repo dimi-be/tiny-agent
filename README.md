@@ -98,19 +98,6 @@ npm test
 
 ## ⚠️ Issues
 
-0. Tool rework
-   - Renaming tools:
-     - read => read_file
-     - write => write_file
-     - grep => search_file
-     - ls => list_directory
-     - mkdir => create_directory
-     - touch => create_file
-     - tree => list_all_files
-   - Replace npm tool with shell tool
-     - shell(command)
-     - whitelist (npm, npx)
-   - Split rm in delete_file and delete_directory
 1. Add support for passing a json dialog history. Prepend the systemprompt to this and send this off to the agent. (Last message needs to be from user?)
 2. Redundant calls to fs.access in syntaxChecker code
 3. tsc output is not limited to just the edited file. Only return the lines for the current file
