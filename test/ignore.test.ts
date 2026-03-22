@@ -1,17 +1,17 @@
 import test from "node:test";
 import assert from "node:assert";
-import mock from "mock-fs";
+import mockfs from "mock-fs";
 import { getIgnore } from "../src/utils/ignore.js";
 
 test("Test utils/ignore", async (t) => {
   t.afterEach(async () => {
-    mock.restore();
+    mockfs.restore();
   });
 
   await t.test(
     "getIgnore no .gitignore apply default ignore list",
     async () => {
-      mock({}); // mock empty directory
+      mockfs({}); // mock empty directory
 
       const ignore = await getIgnore();
 
@@ -54,7 +54,7 @@ test("Test utils/ignore", async (t) => {
   );
 
   await t.test("getIgnore .gitignore load file", async () => {
-    mock({
+    mockfs({
       ".gitignore": "ignorefile\nignoredir/",
     });
 

@@ -1,15 +1,15 @@
 import test from "node:test";
 import assert from "node:assert";
-import mock from "mock-fs";
+import mockfs from "mock-fs";
 import { searchFilesTool } from "../src/tools/search-files-tool.js";
 
 test("searchFilesTool Tests", async (t) => {
   t.afterEach(async () => {
-    mock.restore();
+    mockfs.restore();
   });
 
   await t.test("finds a match in a single file", async () => {
-    mock({
+    mockfs({
       "test-file.txt": "hello world\nthis is a test\nanother hello",
     });
 
@@ -23,7 +23,7 @@ test("searchFilesTool Tests", async (t) => {
   });
 
   await t.test("respects the include glob pattern", async () => {
-    mock({
+    mockfs({
       "src/app.ts": "import express from 'express';",
       "test/app.test.ts": "import { app } from '../src/app';",
       "docs/readme.md": "This is a documentation file about app.",
@@ -38,7 +38,7 @@ test("searchFilesTool Tests", async (t) => {
   });
 
   await t.test("respects default ignore list (e.g. node_modules)", async () => {
-    mock({
+    mockfs({
       "node_modules/lib/index.js": "const secret = 'pattern';",
       "src/index.js": "const pattern = 'found';",
     });
@@ -50,7 +50,7 @@ test("searchFilesTool Tests", async (t) => {
   });
 
   await t.test("handles no matches found", async () => {
-    mock({
+    mockfs({
       "file.txt": "nothing here",
     });
 
@@ -61,7 +61,7 @@ test("searchFilesTool Tests", async (t) => {
 
   await t.test("truncates results at MAX_RESULTS", async () => {
     const manyLines = Array(60).fill("match this").join("\n");
-    mock({
+    mockfs({
       "large-file.txt": manyLines,
     });
 
@@ -74,7 +74,7 @@ test("searchFilesTool Tests", async (t) => {
   });
 
   await t.test("handles dotfiles correctly (ignored by default)", async () => {
-    mock({
+    mockfs({
       ".env": "SECRET_KEY=12345",
       "app.js": "console.log('app');",
     });
