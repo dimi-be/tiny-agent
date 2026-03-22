@@ -24,7 +24,7 @@ test("System Tool (shell) Security Tests", async (t) => {
     const injectionCommand = `npm version && touch ${canaryFile}`;
 
     // This should NOT create the file because execFile does not use a shell
-    const result = await shellTool(injectionCommand);
+    const result = await shellTool({ command: injectionCommand });
 
     // Verify canary file was NOT created
     let exists = false;
@@ -52,7 +52,7 @@ test("System Tool (shell) Security Tests", async (t) => {
     // This tests our argument parser (regex) in shellTool
     // We'll use 'npm config get "user-agent"' which is a valid npm command with quotes
     const command = 'npm config get "user-agent"';
-    const result = await shellTool(command);
+    const result = await shellTool({ command });
 
     assert.ok(
       result.includes("stdout:"),
@@ -67,7 +67,7 @@ test("System Tool (shell) Security Tests", async (t) => {
   await t.test("shellTool enforces whitelist", async () => {
     let errorThrown = false;
     try {
-      await shellTool("ls -la");
+      await shellTool({ command: "ls -la" });
     } catch (error: any) {
       errorThrown = true;
       assert.ok(

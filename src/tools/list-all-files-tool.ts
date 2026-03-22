@@ -5,9 +5,13 @@ import { securePath } from "../utils/security.js";
 import { directoryHasAgentsMd } from "../utils/agentsMd.js";
 import { getIgnore } from "../utils/ignore.js";
 
-export async function listAllFilesTool(dirPath: string = ".") {
-  const resolved = securePath(dirPath);
+export interface ListAllFilesArgs {
+  dirPath?: string;
+}
 
+export async function listAllFilesTool(args: ListAllFilesArgs = {}) {
+  const { dirPath = "." } = args;
+  const resolved = securePath(dirPath);
   const ig = await getIgnore();
 
   async function buildTree(currentPath: string, prefix: string = "") {

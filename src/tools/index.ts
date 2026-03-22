@@ -1,28 +1,21 @@
-import { createDirectoryTool } from "./create-directory-tool.js";
-import { createFileTool } from "./create-file-tool.js";
-import { deleteDirectoryTool } from "./delete-directory-tool.js";
-import { deleteFileTool } from "./delete-file-tool.js";
-import { listAllFilesTool } from "./list-all-files-tool.js";
-import { listDirectoryTool } from "./list-directory-tool.js";
-import { readFileTool } from "./read-file-tool.js";
-import { searchFileTool } from "./search-file-tool.js";
-import { shellTool } from "./shell-tool.js";
-import { writeFileTool } from "./write-file-tool.js";
+import {
+  CreateDirectoryArgs,
+  createDirectoryTool,
+} from "./create-directory-tool.js";
+import { CreateFileArgs, createFileTool } from "./create-file-tool.js";
+import {
+  DeleteDirectoryArgs,
+  deleteDirectoryTool,
+} from "./delete-directory-tool.js";
+import { DeleteFileArgs, deleteFileTool } from "./delete-file-tool.js";
+import { ListAllFilesArgs, listAllFilesTool } from "./list-all-files-tool.js";
+import { ListDirectoryArgs, listDirectoryTool } from "./list-directory-tool.js";
+import { ReadFileArgs, readFileTool } from "./read-file-tool.js";
+import { SearchFileArgs, searchFileTool } from "./search-file-tool.js";
+import { ShellArgs, shellTool } from "./shell-tool.js";
+import { WriteFileArgs, writeFileTool } from "./write-file-tool.js";
 import * as state from "../utils/state.js";
 import { ChatCompletionFunctionTool } from "openai/resources";
-import {
-  ReadFileArgs,
-  SearchFileArgs,
-  ListDirectoryArgs,
-  ListAllFilesArgs,
-  WriteFileArgs,
-  CreateDirectoryArgs,
-  CreateFileArgs,
-  DeleteFileArgs,
-  DeleteDirectoryArgs,
-  ShellArgs,
-  ToolHandlerMap,
-} from "./types.js";
 import { SearchFilesArgs, searchFilesTool } from "./search-files-tool.js";
 
 export function setYolo(yolo: boolean): void {
@@ -213,24 +206,24 @@ export const schemas: ChatCompletionFunctionTool[] = [
   },
 ];
 
+export interface ToolHandlerMap {
+  [key: string]: (args: any) => Promise<string>;
+}
+
 export const handlers: ToolHandlerMap = {
-  read_file: async (args: ReadFileArgs) => await readFileTool(args.filePath),
-  search_file: async (args: SearchFileArgs) =>
-    await searchFileTool(args.pattern, args.filePath),
+  read_file: async (args: ReadFileArgs) => await readFileTool(args),
+  search_file: async (args: SearchFileArgs) => await searchFileTool(args),
   search_files: async (args: SearchFilesArgs) => await searchFilesTool(args),
   list_directory: async (args: ListDirectoryArgs) =>
-    await listDirectoryTool(args.dirPath),
+    await listDirectoryTool(args),
   list_all_files: async (args: ListAllFilesArgs) =>
-    await listAllFilesTool(args.dirPath),
-  write_file: async (args: WriteFileArgs) =>
-    await writeFileTool(args.filePath, args.content),
+    await listAllFilesTool(args),
+  write_file: async (args: WriteFileArgs) => await writeFileTool(args),
   create_directory: async (args: CreateDirectoryArgs) =>
-    await createDirectoryTool(args.dirPath),
-  create_file: async (args: CreateFileArgs) =>
-    await createFileTool(args.filePath),
-  delete_file: async (args: DeleteFileArgs) =>
-    await deleteFileTool(args.filePath),
+    await createDirectoryTool(args),
+  create_file: async (args: CreateFileArgs) => await createFileTool(args),
+  delete_file: async (args: DeleteFileArgs) => await deleteFileTool(args),
   delete_directory: async (args: DeleteDirectoryArgs) =>
-    await deleteDirectoryTool(args.dirPath),
-  shell: async (args: ShellArgs) => await shellTool(args.command),
+    await deleteDirectoryTool(args),
+  shell: async (args: ShellArgs) => await shellTool(args),
 };

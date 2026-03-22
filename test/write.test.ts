@@ -38,10 +38,10 @@ test("Write Tool (Read-Before-Write Policy)", async (t) => {
   await t.test(
     "allows writing to a non-existent file without reading",
     async () => {
-      const result = await writeFileTool(
-        "test-write-policy.txt",
-        "new content",
-      );
+      const result = await writeFileTool({
+        filePath: "test-write-policy.txt",
+        content: "new content",
+      });
       assert.ok(
         result.includes("Successfully wrote"),
         "Should allow writing to a new file.",
@@ -60,7 +60,11 @@ test("Write Tool (Read-Before-Write Policy)", async (t) => {
 
       // 2. Try to write without reading
       await assert.rejects(
-        () => writeFileTool("test-write-policy.txt", "new content"),
+        () =>
+          writeFileTool({
+            filePath: "test-write-policy.txt",
+            content: "new content",
+          }),
         /already exists and is not empty. You must read it first/,
       );
     },
@@ -73,13 +77,13 @@ test("Write Tool (Read-Before-Write Policy)", async (t) => {
       await fs.writeFile(tmpFile, "original content", "utf-8");
 
       // 2. Read the file using the read tool
-      await readFileTool("test-write-policy.txt");
+      await readFileTool({ filePath: "test-write-policy.txt" });
 
       // 3. Try to write now
-      const result = await writeFileTool(
-        "test-write-policy.txt",
-        "updated content",
-      );
+      const result = await writeFileTool({
+        filePath: "test-write-policy.txt",
+        content: "updated content",
+      });
       assert.ok(
         result.includes("Successfully wrote"),
         "Should allow writing after reading.",
@@ -93,10 +97,10 @@ test("Write Tool (Read-Before-Write Policy)", async (t) => {
   await t.test("plain text mode skips syntax checking", async () => {
     setPlainText(true);
     // Write invalid JS file
-    const result = await writeFileTool(
-      "test-write-syntax.js",
-      "const a = 1; function() {",
-    );
+    const result = await writeFileTool({
+      filePath: "test-write-syntax.js",
+      content: "const a = 1; function() {",
+    });
     // It should succeed without any syntax error in the result
     assert.ok(result.includes("Successfully wrote"));
     assert.ok(!result.includes("CRITICAL"));
@@ -105,11 +109,11 @@ test("Write Tool (Read-Before-Write Policy)", async (t) => {
   await t.test(
     "allows writing to a file created by touch without reading",
     async () => {
-      await createFileTool("test-write-policy.txt");
-      const result = await writeFileTool(
-        "test-write-policy.txt",
-        "touched content",
-      );
+      await createFileTool({ filePath: "test-write-policy.txt" });
+      const result = await writeFileTool({
+        filePath: "test-write-policy.txt",
+        content: "touched content",
+      });
       assert.ok(
         result.includes("Successfully wrote"),
         "Should allow writing to a touched file.",
@@ -122,7 +126,10 @@ test("Write Tool (Read-Before-Write Policy)", async (t) => {
     await fs.writeFile(tmpFile, "", "utf-8");
 
     // Should work because size is 0
-    const result = await writeFileTool("test-write-policy.txt", "from empty");
+    const result = await writeFileTool({
+      filePath: "test-write-policy.txt",
+      content: "from empty",
+    });
     assert.ok(
       result.includes("Successfully wrote"),
       "Should allow writing to an empty file.",
@@ -133,11 +140,17 @@ test("Write Tool (Read-Before-Write Policy)", async (t) => {
     "allows writing twice to the same file in one session",
     async () => {
       // 1. Initial write (to new file)
-      await writeFileTool("test-write-policy.txt", "first");
+      await writeFileTool({
+        filePath: "test-write-policy.txt",
+        content: "first",
+      });
 
       // 2. Second write (to existing file)
       // This should work because the first write calls markAsRead
-      const result = await writeFileTool("test-write-policy.txt", "second");
+      const result = await writeFileTool({
+        filePath: "test-write-policy.txt",
+        content: "second",
+      });
       assert.ok(
         result.includes("Successfully wrote"),
         "Should allow subsequent writes.",

@@ -5,7 +5,13 @@ import { confirmAction } from "../utils/ui.js";
 import { getIsYolo, getIsPlainText } from "../utils/state.js";
 import { checkSyntax } from "../utils/syntax/index.js";
 
-export async function writeFileTool(filePath: string, content: string) {
+export interface WriteFileArgs {
+  filePath: string;
+  content: string;
+}
+
+export async function writeFileTool(args: WriteFileArgs) {
+  const { filePath, content } = args;
   const resolved = securePath(filePath);
   try {
     const stats = await fs.stat(resolved);
