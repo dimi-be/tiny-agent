@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert";
 import fs from "fs/promises";
+import mockfs from "mock-fs";
 import path from "path";
 import { writeFileTool } from "../src/tools/write-file-tool.js";
 import { readFileTool } from "../src/tools/read-file-tool.js";
@@ -9,35 +10,21 @@ import { setYolo, setPlainText } from "../src/utils/state.js";
 import { resetFilesReadState } from "../src/utils/security.js";
 
 test("Write Tool (Read-Before-Write Policy)", async (t) => {
-  const tmpFile = path.join(process.cwd(), "test-write-policy.txt");
-  const tmpJsFile = path.join(process.cwd(), "test-write-syntax.js");
   setYolo(true); // Disable confirmation prompts
 
-  // Cleanup before tests
   t.beforeEach(async () => {
-    try {
-      await fs.unlink(tmpFile);
-    } catch (err) {}
-    try {
-      await fs.unlink(tmpJsFile);
-    } catch (err) {}
     setPlainText(false);
     resetFilesReadState();
   });
 
-  // Cleanup after tests
-  t.after(async () => {
-    try {
-      await fs.unlink(tmpFile);
-    } catch (err) {}
-    try {
-      await fs.unlink(tmpJsFile);
-    } catch (err) {}
+  t.afterEach(async () => {
+    mockfs.restore();
   });
 
   await t.test(
     "allows writing to a non-existent file without reading",
     async () => {
+      mockfs({});
       const result = await writeFileTool({
         filePath: "test-write-policy.txt",
         content: "new content",
@@ -47,7 +34,7 @@ test("Write Tool (Read-Before-Write Policy)", async (t) => {
         "Should allow writing to a new file.",
       );
 
-      const content = await fs.readFile(tmpFile, "utf-8");
+      const content = await fs.readFile("test-write-policy.txt", "utf-8");
       assert.strictEqual(content, "new content");
     },
   );
@@ -55,8 +42,9 @@ test("Write Tool (Read-Before-Write Policy)", async (t) => {
   await t.test(
     "blocks writing to an existing file if not read first",
     async () => {
-      // 1. Create the file first
-      await fs.writeFile(tmpFile, "original content", "utf-8");
+      mockfs({
+        "test-write-policy.txt": "original content",
+      });
 
       // 2. Try to write without reading
       await assert.rejects(
@@ -73,8 +61,9 @@ test("Write Tool (Read-Before-Write Policy)", async (t) => {
   await t.test(
     "allows writing to an existing file after it has been read",
     async () => {
-      // 1. Create the file first
-      await fs.writeFile(tmpFile, "original content", "utf-8");
+      mockfs({
+        "test-write-policy.txt": "original content",
+      });
 
       // 2. Read the file using the read tool
       await readFileTool({ filePath: "test-write-policy.txt" });
@@ -89,12 +78,13 @@ test("Write Tool (Read-Before-Write Policy)", async (t) => {
         "Should allow writing after reading.",
       );
 
-      const content = await fs.readFile(tmpFile, "utf-8");
+      const content = await fs.readFile("test-write-policy.txt", "utf-8");
       assert.strictEqual(content, "updated content");
     },
   );
 
   await t.test("plain text mode skips syntax checking", async () => {
+    mockfs({});
     setPlainText(true);
     // Write invalid JS file
     const result = await writeFileTool({
@@ -109,6 +99,7 @@ test("Write Tool (Read-Before-Write Policy)", async (t) => {
   await t.test(
     "allows writing to a file created by touch without reading",
     async () => {
+      mockfs({});
       await createFileTool({ filePath: "test-write-policy.txt" });
       const result = await writeFileTool({
         filePath: "test-write-policy.txt",
@@ -122,8 +113,9 @@ test("Write Tool (Read-Before-Write Policy)", async (t) => {
   );
 
   await t.test("allows writing to an empty file without reading", async () => {
-    // Create an empty file directly (not through touchTool)
-    await fs.writeFile(tmpFile, "", "utf-8");
+    mockfs({
+      "test-write-policy.txt": "",
+    });
 
     // Should work because size is 0
     const result = await writeFileTool({
@@ -139,6 +131,7 @@ test("Write Tool (Read-Before-Write Policy)", async (t) => {
   await t.test(
     "allows writing twice to the same file in one session",
     async () => {
+      mockfs({});
       // 1. Initial write (to new file)
       await writeFileTool({
         filePath: "test-write-policy.txt",
@@ -156,7 +149,7 @@ test("Write Tool (Read-Before-Write Policy)", async (t) => {
         "Should allow subsequent writes.",
       );
 
-      const content = await fs.readFile(tmpFile, "utf-8");
+      const content = await fs.readFile("test-write-policy.txt", "utf-8");
       assert.strictEqual(content, "second");
     },
   );
