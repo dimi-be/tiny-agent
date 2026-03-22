@@ -54,6 +54,7 @@ export async function runAgentLoop({
         [
           "read_file",
           "search_file",
+          "search_files",
           "list_directory",
           "list_all_files",
         ].includes(schema.function.name),

@@ -3,20 +3,16 @@ import path from "path";
 import ignore from "ignore";
 import { securePath } from "../utils/security.js";
 import { directoryHasAgentsMd } from "../utils/agentsMd.js";
+import { getIgnore } from "../utils/ignore.js";
 
-export async function listAllFilesTool(dirPath: string = ".") {
+export interface ListAllFilesArgs {
+  dirPath?: string;
+}
+
+export async function listAllFilesTool(args: ListAllFilesArgs = {}) {
+  const { dirPath = "." } = args;
   const resolved = securePath(dirPath);
-
-  const ig = ignore();
-  try {
-    const gitignoreContent = await fs.readFile(
-      path.join(process.cwd(), ".gitignore"),
-      "utf-8",
-    );
-    ig.add(gitignoreContent);
-  } catch (e) {}
-
-  ig.add(["node_modules", ".*"]);
+  const ig = await getIgnore();
 
   async function buildTree(currentPath: string, prefix: string = "") {
     const entries = await fs.readdir(currentPath, { withFileTypes: true });

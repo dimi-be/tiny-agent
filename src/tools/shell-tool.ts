@@ -4,7 +4,12 @@ import { getIsYolo } from "../utils/state.js";
 
 const exeWhiteList = ["npm", "npx"];
 
-export async function shellTool(command: string) {
+export interface ShellArgs {
+  command: string;
+}
+
+export async function shellTool(args: ShellArgs) {
+  const { command } = args;
   const parsedArgs =
     command
       .match(/(?:[^\s"]+|"[^"]*")+/g)
@@ -17,7 +22,7 @@ export async function shellTool(command: string) {
   }
 
   const executable = parsedArgs[0];
-  const args = parsedArgs.slice(1);
+  const commandArgs = parsedArgs.slice(1);
 
   if (!exeWhiteList.includes(executable)) {
     throw new Error(
@@ -31,7 +36,7 @@ export async function shellTool(command: string) {
   }
 
   try {
-    const { stdout, stderr } = await execFileAsync(executable, args);
+    const { stdout, stderr } = await execFileAsync(executable, commandArgs);
     return `stdout:\n${stdout}\nstderr:\n${stderr}`;
   } catch (error: any) {
     return `Error: ${error.message}\nstdout:\n${error.stdout || ""}\nstderr:\n${error.stderr || ""}`;

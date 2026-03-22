@@ -1,27 +1,19 @@
 import test from "node:test";
 import assert from "node:assert";
 import fs from "fs/promises";
-import path from "path";
+import mockfs from "mock-fs";
 import { runAgentLoop } from "../src/agent.js";
 import { ChatCompletionMessageParam } from "openai/resources/chat/completions.js";
 
 test("History Processing and Validation", async (t) => {
-  const tmpLog = path.join(process.cwd(), "test-history.log");
-
-  t.beforeEach(async () => {
-    try {
-      await fs.unlink(tmpLog);
-    } catch {}
-  });
-
   t.afterEach(async () => {
-    try {
-      await fs.unlink(tmpLog);
-    } catch {}
+    mockfs.restore();
   });
 
-  async function getLoggedMessages(): Promise<ChatCompletionMessageParam[]> {
-    const content = await fs.readFile(tmpLog, "utf8");
+  async function getLoggedMessages(
+    logPath: string,
+  ): Promise<ChatCompletionMessageParam[]> {
+    const content = await fs.readFile(logPath, "utf8");
     // Log file has JSON objects separated by \n\n
     const chunks = content.split("\n\n").filter((c) => c.trim().length > 0);
     return chunks.map((c) => JSON.parse(c));
@@ -30,6 +22,11 @@ test("History Processing and Validation", async (t) => {
   await t.test(
     "prepends system prompt if missing and appends prompt if provided",
     async () => {
+      mockfs({
+        "test-history.log": "",
+      });
+      const tmpLog = "test-history.log";
+
       const history: ChatCompletionMessageParam[] = [
         { role: "user", content: "hello" },
         { role: "assistant", content: "hi" },
@@ -52,7 +49,7 @@ test("History Processing and Validation", async (t) => {
         // Ignore network error
       }
 
-      const messages = await getLoggedMessages();
+      const messages = await getLoggedMessages(tmpLog);
 
       assert.strictEqual(messages[0].role, "system");
       assert.strictEqual(messages[0].content, "SYSTEM_PROMPT");
@@ -66,6 +63,11 @@ test("History Processing and Validation", async (t) => {
   );
 
   await t.test("overwrites existing system prompt", async () => {
+    mockfs({
+      "test-history-2.log": "",
+    });
+    const tmpLog = "test-history-2.log";
+
     const history: ChatCompletionMessageParam[] = [
       { role: "system", content: "OLD_SYSTEM_PROMPT" },
       { role: "user", content: "hello" },
@@ -86,7 +88,7 @@ test("History Processing and Validation", async (t) => {
       // Ignore network error
     }
 
-    const messages = await getLoggedMessages();
+    const messages = await getLoggedMessages(tmpLog);
 
     assert.strictEqual(messages[0].role, "system");
     assert.strictEqual(

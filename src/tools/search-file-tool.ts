@@ -1,7 +1,13 @@
 import fs from "fs/promises";
 import { securePath, markAsRead } from "../utils/security.js";
 
-export async function searchFileTool(pattern: string, filePath: string) {
+export interface SearchFileArgs {
+  pattern: string;
+  filePath: string;
+}
+
+export async function searchFileTool(args: SearchFileArgs) {
+  const { pattern, filePath } = args;
   const resolved = securePath(filePath);
   const content = await fs.readFile(resolved, "utf-8");
   markAsRead(resolved);
