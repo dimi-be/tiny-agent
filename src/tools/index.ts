@@ -23,6 +23,7 @@ import {
   ShellArgs,
   ToolHandlerMap,
 } from "./types.js";
+import { SearchFilesArgs, searchFilesTool } from "./search-files-tool.js";
 
 export function setYolo(yolo: boolean): void {
   state.setYolo(yolo);
@@ -52,7 +53,7 @@ export const schemas: ChatCompletionFunctionTool[] = [
     function: {
       name: "search_file",
       description:
-        "Searches for a string and returns matches with line numbers.",
+        "Searches for a string in and returns matches with line numbers.",
       parameters: {
         type: "object",
         properties: {
@@ -60,6 +61,30 @@ export const schemas: ChatCompletionFunctionTool[] = [
           filePath: { type: "string" },
         },
         required: ["pattern", "filePath"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "search_files",
+      description:
+        "Search for a text pattern across multiple files in the workspace. Returns file paths, line numbers, and matching snippets. Respecting .gitignore or if no .gitignore is present hides hidden files, node_modules, dist, buid and package-lock.json",
+      parameters: {
+        type: "object",
+        properties: {
+          pattern: {
+            type: "string",
+            description:
+              "The regex or text string to search for (e.g., 'function login').",
+          },
+          include: {
+            type: "string",
+            description:
+              "Optional glob pattern to limit the search (e.g., 'src/**/*.ts'). Defaults to all files.",
+          },
+        },
+        required: ["pattern"],
       },
     },
   },
@@ -192,6 +217,7 @@ export const handlers: ToolHandlerMap = {
   read_file: async (args: ReadFileArgs) => await readFileTool(args.filePath),
   search_file: async (args: SearchFileArgs) =>
     await searchFileTool(args.pattern, args.filePath),
+  search_files: async (args: SearchFilesArgs) => await searchFilesTool(args),
   list_directory: async (args: ListDirectoryArgs) =>
     await listDirectoryTool(args.dirPath),
   list_all_files: async (args: ListAllFilesArgs) =>
