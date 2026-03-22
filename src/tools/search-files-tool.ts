@@ -27,10 +27,7 @@ export async function searchFilesTool(args: SearchFilesArgs): Promise<string> {
     const regex = new RegExp(pattern, "i");
 
     for (const file of files) {
-      if (results.length >= MAX_RESULTS) {
-        results.push(
-          "... [Truncated] Too many matches found. Please narrow your search pattern.",
-        );
+      if (results.length > MAX_RESULTS) {
         break;
       }
 
@@ -44,11 +41,13 @@ export async function searchFilesTool(args: SearchFilesArgs): Promise<string> {
         const content = await fs.readFile(fullPath, "utf-8");
         const lines = content.split("\n");
 
-        lines.forEach((line, index) => {
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
+
           if (results.length < MAX_RESULTS && regex.test(line)) {
-            results.push(`${file}:${index + 1}: ${line.trim()}`);
+            results.push(`${file}:${i + 1}: ${line.trim()}`);
           }
-        });
+        }
       } catch (error: any) {
         if (
           error.message !=
@@ -57,6 +56,12 @@ export async function searchFilesTool(args: SearchFilesArgs): Promise<string> {
           throw error;
         }
       }
+    }
+
+    if (results.length >= MAX_RESULTS) {
+      results.push(
+        "... [Truncated] Too many matches found. Please narrow your search pattern.",
+      );
     }
 
     if (results.length === 0) {

@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert";
 import mock from "mock-fs";
-import { getIgnore } from "../src/utils/ignore.ts";
+import { getIgnore } from "../src/utils/ignore.js";
 
 test("Test utils/ignore", async (t) => {
   t.afterEach(async () => {
