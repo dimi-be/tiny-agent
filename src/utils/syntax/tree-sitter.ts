@@ -51,12 +51,6 @@ export async function checkWithTreeSitter(filePath: string, ext: string) {
   if (!wasmPath) return null; // Unsupported
 
   try {
-    await fs.access(filePath);
-  } catch (err: any) {
-    return `Syntax Error (Tree-sitter): ${err.message}`;
-  }
-
-  try {
     if (!isInitialized) {
       await Parser.init();
       isInitialized = true;

@@ -5,7 +5,10 @@ import { checkWithNode } from "./node.js";
 import { checkWithTsc } from "./tsc.js";
 import { checkWithPython } from "./python.js";
 
-export async function checkSyntax(filePath: string) {
+export async function checkSyntax(
+  filePath: string,
+  workingDirectory: string = ".",
+) {
   const ext = path.extname(filePath).toLowerCase();
 
   try {
@@ -47,7 +50,7 @@ export async function checkSyntax(filePath: string) {
 
       // Stage 3: TSC (Type & Deep Logic - TypeScript Only)
       if (isTS) {
-        const tscError = await checkWithTsc(filePath);
+        const tscError = await checkWithTsc(filePath, workingDirectory);
         if (tscError) return tscError;
       }
 

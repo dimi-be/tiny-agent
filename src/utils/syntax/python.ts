@@ -3,12 +3,6 @@ import fs from 'fs/promises';
 
 export async function checkWithPython(filePath: string) {
   try {
-    await fs.access(filePath);
-  } catch (err: any) {
-    return `Syntax Error (Python): ${err.message}`;
-  }
-
-  try {
     try {
       await execFileAsync('python3', ['-m', 'py_compile', filePath]);
     } catch (e) {

@@ -3,27 +3,49 @@ import fs from "fs/promises";
 import path from "path";
 import { formatDiagnostic } from "./formatter.js";
 
-export async function checkWithTsc(filePath: string) {
-  try {
-    await fs.access(filePath);
-  } catch (err: any) {
-    return `Syntax Error (TSC): ${err.message}`;
-  }
+async function getTsConfigPath(workingDirectory: string) {
+  const tsConfigPath = path.join(workingDirectory, "tsconfig.json");
 
   try {
-    // --isolatedModules: treats file as a standalone unit
-    // --noEmit: checks only, doesn't write files
-    await execFileAsync("npx", [
-      "tsc",
-      filePath,
-      "--noEmit",
-      "--isolatedModules",
-      "--skipLibCheck",
-      "--jsx",
-      "react-jsx",
-      "--pretty",
-      "false",
-    ]);
+    await fs.access(tsConfigPath);
+    return tsConfigPath;
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function checkWithTsc(filePath: string, workingDirectory: string) {
+  try {
+    const tsConfigPath = await getTsConfigPath(workingDirectory);
+
+    // Only way (I found) to auto load tsconfig.json is by building the project.
+    // This is not very efficient but produces the best results.
+    if (tsConfigPath != null) {
+      await execFileAsync("npx", [
+        "tsc",
+        "-p",
+        tsConfigPath,
+        "--noEmit",
+        "--isolatedModules",
+        "--skipLibCheck",
+        "--pretty",
+        "false",
+      ]);
+    } else {
+      // fallback in case no tsconfig file is found
+      await execFileAsync("npx", [
+        "tsc",
+        filePath,
+        "--noEmit", // checks only, doesn't write files
+        "--isolatedModules", // treats file as a standalone unit
+        "--skipLibCheck",
+        "--jsx",
+        "react-jsx",
+        "--pretty",
+        "false",
+      ]);
+    }
+
     return null; // Passed
   } catch (error: any) {
     // stdout contains the actual type-check failures
