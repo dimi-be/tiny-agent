@@ -2,6 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import { glob } from "glob";
 import { securePath } from "../utils/security.js";
+import { getIgnore } from "../utils/ignore.js";
 
 const MAX_RESULTS = 50;
 
@@ -10,39 +11,36 @@ export interface SearchFilesArgs {
   include?: string;
 }
 
-/**
- * Description: Search for a text pattern across multiple files.
- * Returns file paths and line numbers.
- */
-
 export async function searchFilesTool(args: SearchFilesArgs): Promise<string> {
   const { pattern, include = "**/*" } = args;
   const PROJECT_ROOT = process.cwd();
+  const ignore = await getIgnore();
 
   try {
     // Find all matching files while ignoring noise
     const files = await glob(include, {
       cwd: PROJECT_ROOT,
       nodir: true,
-      ignore: [
-        "**/node_modules/**",
-        "**/.git/**",
-        "**/dist/**",
-        "**/build/**",
-        "package-lock.json",
-      ],
     });
 
     const results: string[] = [];
     const regex = new RegExp(pattern, "i");
 
     for (const file of files) {
-      if (results.length >= MAX_RESULTS) break;
+      if (results.length >= MAX_RESULTS) {
+        results.push(
+          "... [Truncated] Too many matches found. Please narrow your search pattern.",
+        );
+        break;
+      }
+
+      const relativePath = path.join(file);
+      const fullPath = path.resolve(PROJECT_ROOT, file);
+      securePath(fullPath);
+
+      if (ignore.ignores(relativePath)) continue;
 
       try {
-        const fullPath = path.resolve(PROJECT_ROOT, file);
-        const resolved = securePath(fullPath);
-
         const content = await fs.readFile(fullPath, "utf-8");
         const lines = content.split("\n");
 
@@ -63,12 +61,6 @@ export async function searchFilesTool(args: SearchFilesArgs): Promise<string> {
 
     if (results.length === 0) {
       return "No matches found.";
-    }
-
-    if (results.length >= MAX_RESULTS) {
-      results.push(
-        "\n... [Truncated] Too many matches found. Please narrow your search pattern.",
-      );
     }
 
     return results.join("\n");
