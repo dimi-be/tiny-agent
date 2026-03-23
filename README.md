@@ -117,9 +117,10 @@ npm test
 ## ⚠️ Issues
 
 1. Does not handle monorepo correctly => find closest tsconfig file
-2. index.ts and agent.ts needs cleaning up
-3. state is a mix of config and state
-4. state is global and needs move to agent.ts to prepare for potential multi agent functionality
+2. Prevent agent from starting long running/non-ending commands ex: npx tsc -w
+3. index.ts and agent.ts needs cleaning up
+4. state is a mix of config and state
+5. state is global and needs move to agent.ts to prepare for potential multi agent functionality
 
 ## ⚖️ License
 
