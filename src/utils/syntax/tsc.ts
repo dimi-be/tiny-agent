@@ -2,21 +2,16 @@ import { execFileAsync } from "../exec.js";
 import fs from "fs/promises";
 import path from "path";
 import { formatDiagnostic } from "./formatter.js";
+import { findNearestFile } from "../fs.js";
 
-async function getTsConfigPath(workingDirectory: string) {
-  const tsConfigPath = path.join(workingDirectory, "tsconfig.json");
-
-  try {
-    await fs.access(tsConfigPath);
-    return tsConfigPath;
-  } catch (error) {
-    return null;
-  }
+async function getTsConfigPath(filePath: string, workingDirectory: string) {
+  const startDir = path.dirname(path.resolve(workingDirectory, filePath));
+  return await findNearestFile(startDir, "tsconfig.json", workingDirectory);
 }
 
 export async function checkWithTsc(filePath: string, workingDirectory: string) {
   try {
-    const tsConfigPath = await getTsConfigPath(workingDirectory);
+    const tsConfigPath = await getTsConfigPath(filePath, workingDirectory);
 
     // Only way (I found) to auto load tsconfig.json is by building the project.
     // This is not very efficient but produces the best results.
