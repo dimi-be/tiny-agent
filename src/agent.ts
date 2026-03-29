@@ -129,7 +129,6 @@ export async function runAgentLoop({
         const toolMessage: ChatCompletionMessageParam = {
           tool_call_id: toolCall.id,
           role: "tool",
-          name: functionName,
           content: String(result),
         };
         messages.push(toolMessage);
@@ -139,7 +138,6 @@ export async function runAgentLoop({
         const toolErrorMessage: ChatCompletionMessageParam = {
           tool_call_id: toolCall.id,
           role: "tool",
-          name: functionName,
           content: `Error: ${error.message}`,
         };
         messages.push(toolErrorMessage);

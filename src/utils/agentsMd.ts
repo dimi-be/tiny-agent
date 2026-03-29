@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs/promises';
+import { findNearestFile } from './fs.js';
 
 // A Set to track which nested AGENTS.md files have already been flagged to the model in the current session.
 // This prevents us from spamming the model with the same warning over and over.
@@ -10,32 +11,15 @@ const warnedAgentsFiles = new Set<string>();
  * stopping at the project root (process.cwd()).
  */
 async function findNearestAgentsMd(startDir: string) {
-  let currentDir = startDir;
   const rootDir = process.cwd();
+  const agentsPath = await findNearestFile(startDir, 'AGENTS.md', rootDir);
 
-  while (currentDir.startsWith(rootDir)) {
-    const agentsPath = path.join(currentDir, 'AGENTS.md');
-    
-    // We explicitly skip the root AGENTS.md because it's already injected into the system prompt.
-    if (agentsPath === path.join(rootDir, 'AGENTS.md')) {
-      break;
-    }
-
-    try {
-      const stats = await fs.stat(agentsPath);
-      if (stats.isFile()) {
-        return agentsPath;
-      }
-    } catch (err) {
-      // File does not exist here, continue up
-    }
-
-    const parentDir = path.dirname(currentDir);
-    if (parentDir === currentDir) break; // Reached system root
-    currentDir = parentDir;
+  // We explicitly skip the root AGENTS.md because it's already injected into the system prompt.
+  if (agentsPath && agentsPath === path.join(rootDir, 'AGENTS.md')) {
+    return null;
   }
 
-  return null;
+  return agentsPath;
 }
 
 /**

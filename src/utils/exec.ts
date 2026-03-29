@@ -8,13 +8,14 @@ const promisifiedExecFile = promisify(execFile);
  * This is a security measure to prevent command injection.
  * @param {string} file The name or path of the executable file to run.
  * @param {string[]} args List of string arguments.
- * @param {ExecFileOptions} options Execution options.
+ * @param {number} timeout Timeout in milliseconds (default: 30000).
  * @returns {Promise<{stdout: string, stderr: string}>}
  */
-export async function execFileAsync(file: string, args: string[] = []) {
+export async function execFileAsync(file: string, args: string[] = [], timeout: number = 30000) {
   const options: ExecFileOptions = {
     cwd: process.cwd(),
     shell: false, // Explicitly disable shell for security
+    timeout,
   };
 
   return await promisifiedExecFile(file, args, options);
