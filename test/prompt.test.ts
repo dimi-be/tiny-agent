@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert";
 import OpenAI from "openai";
-import { isGemmaToolCall } from "../src/utils/prompt";
+import { isGemmaToolCall, convertGemmaToolCalls } from "../src/utils/prompt";
 
 test("Promp utils testing", async (t) => {
   await t.test("should return true if message is a gemma tool call", () => {
@@ -41,4 +41,20 @@ test("Promp utils testing", async (t) => {
       );
     },
   );
+
+  await t.test("should convert a gemma tool call", () => {
+    const message: OpenAI.ChatCompletionMessage = {
+      role: "assistant",
+      content:
+        '<|tool_call>call:list_all_files{dirPath:<|"|>.<|"|>}<tool_call|><|tool_response><|tool_response><|tool_response>[TOOL_RESULT][END_TOOL_RESULT]',
+      tool_calls: [],
+      refusal: null,
+    };
+
+    const result = convertGemmaToolCalls(message);
+
+    assert.equal(result.length, 1, "One tool call should be converted");
+    assert.equal(result[0].function.name, "list_all_files");
+    assert.equal(result[0].function.arguments, '{"dirPath":"."}');
+  });
 });

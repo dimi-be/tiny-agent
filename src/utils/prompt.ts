@@ -13,13 +13,25 @@ export function convertGemmaToolCalls(
   let match;
   const toolCalls: OpenAI.ChatCompletionMessageFunctionToolCall[] = [];
 
+  // Split the tool calls
   while ((match = regex.exec("" + msg.content)) !== null) {
     const name = match[1];
-    // Simple fix for Gemma's quirky quote tokens <|'|>
-    const argsString = match[2].replace(/<\|'\|>/g, '"');
+
+    // clean up the quote tokens <|\"|>, <|"|> and <|'|>
+    const argsString = match[2]
+      .replace(/<\|"\|>/g, '"')
+      .replace(/<\|'\|>/g, '"')
+      // wrap unquoted keys in double quotes
+      .replace(/(^|[,{\s])([a-zA-Z0-9_]+)\s*:/g, (m, prefix, key) => {
+        return `${prefix}"${key}":`;
+      });
+
+    const finalJsonString = argsString.trim().startsWith("{")
+      ? argsString
+      : `{${argsString}}`;
+
     try {
-      // Gemma uses a python-like dict syntax; we may need to wrap in braces to parse as JSON
-      const args = JSON.parse(`{${argsString}}`);
+      const args = JSON.parse(finalJsonString);
       toolCalls.push({
         id: `call_${Math.random().toString(36).substring(2, 11)}`,
         type: "function",
