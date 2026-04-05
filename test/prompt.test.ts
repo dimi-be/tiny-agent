@@ -90,25 +90,63 @@ test("Promp utils testing", async (t) => {
     assert.equal(result.content, "");
   });
 
-  //   await t.test("should return context after tool call", () => {
-  //     const message: OpenAI.ChatCompletionMessage = {
-  //       role: "assistant",
-  //       content:
-  //         '<|tool_call>call:list_all_files{dirPath:<|"|>.<|"|>}<tool_call|><|tool_response><|tool_response>thought\nThe current project appears to be a "tiny-agent"',
-  //       tool_calls: [],
-  //       refusal: null,
-  //     };
+  await t.test("should return content after tool call 01", () => {
+    const message: OpenAI.ChatCompletionMessage = {
+      role: "assistant",
+      content:
+        '<|tool_call>call:list_all_files{dirPath:<|"|>.<|"|>}<tool_call|><|tool_response><|tool_response>thought\nThe current project appears to be a "tiny-agent"',
+      tool_calls: [],
+      refusal: null,
+    };
 
-  //     const result = convertGemmaToolCalls(message);
+    const result = convertGemmaToolCalls(message);
 
-  //     assert.equal(
-  //       result.tool_calls?.length,
-  //       1,
-  //       "One tool call should be converted",
-  //     );
-  //     assert.equal(
-  //       result.content,
-  //       'thought\nThe current project appears to be a "tiny-agent"',
-  //     );
-  //   });
+    assert.equal(
+      result.tool_calls?.length,
+      1,
+      "One tool call should be converted",
+    );
+    assert.equal(
+      result.content,
+      'thought\nThe current project appears to be a "tiny-agent"',
+    );
+  });
+
+  await t.test("should return content after tool call 02", () => {
+    const message: OpenAI.ChatCompletionMessage = {
+      role: "assistant",
+      content:
+        '<|tool_call>call:list_all_files{dirPath:<|"|>.<|"|>}<tool_call|><|tool_response><|tool_response>ments:\n',
+      tool_calls: [],
+      refusal: null,
+    };
+
+    const result = convertGemmaToolCalls(message);
+
+    assert.equal(
+      result.tool_calls?.length,
+      1,
+      "One tool call should be converted",
+    );
+    assert.equal(result.content, "ments:");
+  });
+
+  await t.test("should return content after tool call 03", () => {
+    const message: OpenAI.ChatCompletionMessage = {
+      role: "assistant",
+      content:
+        '<|tool_call>call:read_file{filePath:<|"|>src/security.ts<|"|>}<tool_call|><|tool_response>![END_TOOL_RESULT]\n<result>\nexport class SecurityError extends </result>',
+      tool_calls: [],
+      refusal: null,
+    };
+
+    const result = convertGemmaToolCalls(message);
+
+    assert.equal(
+      result.tool_calls?.length,
+      1,
+      "One tool call should be converted",
+    );
+    assert.equal(result.content, "");
+  });
 });

@@ -43,22 +43,27 @@ export function convertGemmaToolCalls(
   }
 
   const markers = [
-    "<|tool_call",
-    "<|tool_response",
+    "<|tool_call>",
+    "<tool_call|>",
+    "<|tool_response>",
+    "<tool_response|>",
     "[TOOL_RESULT]",
     "[END_TOOL_REQUEST]",
+    "[END_TOOL_RESULT]",
+    "<result>",
+    "</result>",
   ];
-  let cutIndex = rawContent.length;
+  let cutIndex = 0;
 
   for (const marker of markers) {
-    const index = rawContent.indexOf(marker);
-    if (index !== -1 && index < cutIndex) {
-      cutIndex = index;
+    const index = rawContent.lastIndexOf(marker);
+    if (index !== -1 && index > cutIndex) {
+      cutIndex = index + marker.length;
     }
   }
 
-  // The actual verbal content is only what's BEFORE these tags
-  const verbalContent = rawContent.substring(0, cutIndex).trim();
+  // The actual verbal content is only what's AFTER these tags
+  const verbalContent = rawContent.substring(cutIndex).trim();
 
   return {
     ...msg,
