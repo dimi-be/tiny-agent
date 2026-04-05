@@ -2,19 +2,19 @@ import OpenAI from "openai";
 
 export function isGemmaToolCall(msg: OpenAI.ChatCompletionMessage): boolean {
   const toolCalls = msg.tool_calls || [];
-
   return !toolCalls.length && !!msg.content && msg.content.includes("call:");
 }
 
 export function convertGemmaToolCalls(
   msg: OpenAI.ChatCompletionMessage,
-): OpenAI.ChatCompletionMessageFunctionToolCall[] {
+): OpenAI.ChatCompletionMessage {
   const regex = /call:(\w+)\{(.*?)\}/g;
   let match;
   const toolCalls: OpenAI.ChatCompletionMessageFunctionToolCall[] = [];
+  const rawContent = msg.content || "";
 
   // Split the tool calls
-  while ((match = regex.exec("" + msg.content)) !== null) {
+  while ((match = regex.exec(rawContent)) !== null) {
     const name = match[1];
 
     // clean up the quote tokens <|\"|>, <|"|> and <|'|>
@@ -42,5 +42,11 @@ export function convertGemmaToolCalls(
     }
   }
 
-  return toolCalls;
+  const cleanContent = rawContent.replace(/call:\w+\{.*?\}/g, "").trim();
+
+  return {
+    ...msg,
+    content: cleanContent,
+    tool_calls: toolCalls,
+  };
 }

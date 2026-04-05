@@ -3,6 +3,7 @@ import fs from "fs/promises";
 import * as tools from "./tools/index.js";
 import { setYolo, setPlainText } from "./utils/state.js";
 import { ChatCompletionMessageParam } from "openai/resources/chat/completions.js";
+import { convertGemmaToolCalls, isGemmaToolCall } from "./utils/prompt.js";
 
 export interface AgentOptions {
   model: string;
@@ -90,9 +91,13 @@ export async function runAgentLoop({
     if (response.usage && response.usage.total_tokens) {
       totalTokens += response.usage.total_tokens;
     }
-    const message = response.choices[0].message;
-    messages.push(message);
-    await writeToLog(message);
+    const rawMessage = response.choices[0].message;
+    messages.push(rawMessage);
+    await writeToLog(rawMessage);
+
+    const message = isGemmaToolCall(rawMessage)
+      ? convertGemmaToolCalls(rawMessage)
+      : rawMessage;
 
     if (message.content) {
       console.log(message.content.trim());

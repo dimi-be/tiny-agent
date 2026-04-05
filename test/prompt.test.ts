@@ -53,8 +53,18 @@ test("Promp utils testing", async (t) => {
 
     const result = convertGemmaToolCalls(message);
 
-    assert.equal(result.length, 1, "One tool call should be converted");
-    assert.equal(result[0].function.name, "list_all_files");
-    assert.equal(result[0].function.arguments, '{"dirPath":"."}');
+    assert.equal(
+      result.tool_calls?.length,
+      1,
+      "One tool call should be converted",
+    );
+    assert.equal(
+      (result.tool_calls![0] as any).function.name,
+      "list_all_files",
+    );
+    assert.equal(
+      (result.tool_calls![0] as any).function.arguments,
+      '{"dirPath":"."}',
+    );
   });
 });
