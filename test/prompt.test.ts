@@ -61,10 +61,54 @@ test("Promp utils testing", async (t) => {
     assert.equal(
       (result.tool_calls![0] as any).function.name,
       "list_all_files",
+      "function name should be converted",
     );
     assert.equal(
       (result.tool_calls![0] as any).function.arguments,
       '{"dirPath":"."}',
+      "arguments should be converted",
     );
+    assert.equal(result.content, "", "no content is present");
   });
+
+  await t.test("should strip expected result from the content", () => {
+    const message: OpenAI.ChatCompletionMessage = {
+      role: "assistant",
+      content:
+        '<|tool_call>call:list_all_files{dirPath:<|\"|>.<|\"|>}<tool_call|><|tool_response>[END_TOOL_REQUEST]\n[TOOL_RESULT]\n.\n├── package.json\n├── README.md\n└── src[END_TOOL_RESULT]',
+      tool_calls: [],
+      refusal: null,
+    };
+
+    const result = convertGemmaToolCalls(message);
+
+    assert.equal(
+      result.tool_calls?.length,
+      1,
+      "One tool call should be converted",
+    );
+    assert.equal(result.content, "");
+  });
+
+  //   await t.test("should return context after tool call", () => {
+  //     const message: OpenAI.ChatCompletionMessage = {
+  //       role: "assistant",
+  //       content:
+  //         '<|tool_call>call:list_all_files{dirPath:<|"|>.<|"|>}<tool_call|><|tool_response><|tool_response>thought\nThe current project appears to be a "tiny-agent"',
+  //       tool_calls: [],
+  //       refusal: null,
+  //     };
+
+  //     const result = convertGemmaToolCalls(message);
+
+  //     assert.equal(
+  //       result.tool_calls?.length,
+  //       1,
+  //       "One tool call should be converted",
+  //     );
+  //     assert.equal(
+  //       result.content,
+  //       'thought\nThe current project appears to be a "tiny-agent"',
+  //     );
+  //   });
 });

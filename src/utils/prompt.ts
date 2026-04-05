@@ -42,11 +42,27 @@ export function convertGemmaToolCalls(
     }
   }
 
-  const cleanContent = rawContent.replace(/call:\w+\{.*?\}/g, "").trim();
+  const markers = [
+    "<|tool_call",
+    "<|tool_response",
+    "[TOOL_RESULT]",
+    "[END_TOOL_REQUEST]",
+  ];
+  let cutIndex = rawContent.length;
+
+  for (const marker of markers) {
+    const index = rawContent.indexOf(marker);
+    if (index !== -1 && index < cutIndex) {
+      cutIndex = index;
+    }
+  }
+
+  // The actual verbal content is only what's BEFORE these tags
+  const verbalContent = rawContent.substring(0, cutIndex).trim();
 
   return {
     ...msg,
-    content: cleanContent,
+    content: verbalContent,
     tool_calls: toolCalls,
   };
 }
